@@ -189,7 +189,7 @@ function nightUi(g) {
     sfx.flip(); setTimeout(sfx.flip, 600);
   } else if (g.eyes === 'open' && g.role === 'master') {
     h = '<div class="nt">👑 おだいばん だけ 目をあけて</div><div class="wcard"><small>お題</small><b>' + esc(g.word) + '</b><span class="cat">' + esc(g.cat || '') + '</span></div>' +
-      '<p class="nsub">知らない言葉なら かえてOK（あと' + (3 - g.swaps) + '回）</p><div class="row"><button class="btn" id="swapBtn"' + (g.swaps >= 3 ? ' disabled' : '') + '>🔄 お題をかえる</button><button class="btn main" id="mOkBtn">👌 OK・目をとじる</button></div>';
+      '<p class="nsub">知らない言葉なら かえてね（公式ルール）</p><div class="row"><button class="btn" id="swapBtn"' + (g.swaps >= 30 ? ' disabled' : '') + '>🔄 お題をかえる</button><button class="btn main" id="mOkBtn">👌 OK・目をとじる</button></div>';
   } else if (g.eyes === 'open' && g.role === 'insider') {
     h = '<div class="nt">🤫 しってるっこ だけ 目をあけて</div><div class="wcard ins"><small>お題</small><b>' + esc(g.word) + '</b><span class="cat">' + esc(g.cat || '') + '</span></div><p class="nsub">おぼえたら 目をとじてね。バレないように みんなを ここへ みちびこう</p>';
     sfx.turn(); vibrate([60, 60, 60]);
@@ -281,7 +281,7 @@ function paintTimer() {
   var el = $('timer'); if (!el) return;
   var left = ui.deadline ? Math.max(0, ui.deadline - Date.now()) : 0, v = lastView, g = v && v.g;
   if (!left || !g || g.phase === 'end' || g.phase === 'deal' || g.phase === 'night') { el.style.visibility = 'hidden'; return; }
-  el.style.visibility = ''; var s = Math.ceil(left / 1000);
+  el.style.visibility = ''; var s = Math.ceil(left / 1000); if (g.phase === 'qa' && g.limitSec) s = Math.min(s, g.limitSec);   // 制限時間より大きくは出さない
   el.textContent = (g.phase === 'talk' ? '⏳ ' : '⏱ ') + Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2);
   el.classList.toggle('low', s <= (g.phase === 'qa' ? 30 : 10));
   if ((g.phase === 'qa' && s <= 10 || (g.toAnswer && s <= 5)) && s !== ui.tickSec) { ui.tickSec = s; sfx.tick(); }

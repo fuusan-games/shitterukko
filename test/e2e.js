@@ -33,7 +33,11 @@ const MIC_MOCK = () => {
   // NPCの質問と制限時間を止める（turboでは一瞬で終わるので、人間の操作を確かめる間だけ）
   const hold = async (p, ph) => { await waitV(p, 'v.g && v.g.phase === "' + ph + '"', 20000); await p.evaluate(() => { const G = window.__sk.hostRoom().G; G.at = Date.now() + 1e7; }); };
   const release = p => p.evaluate(() => { const G = window.__sk.hostRoom().G; G.at = Date.now(); });
-  const freeze = (p, on) => p.evaluate(on => { const G = window.__sk.hostRoom().G; if (!G) return; if (on) { G._fz = G.npcNext.slice(); G.npcNext = G.npcNext.map(() => Date.now() + 1e7); G.deadline = Date.now() + 1e7; if (G.phase === 'talk') G.at = Date.now() + 1e7; } else { G.npcNext = G.npcNext.map(() => Date.now()); G.deadline = Date.now() + 8000; if (G.phase === 'talk') G.at = Date.now(); } }, on);
+  // NPCをしばらく動かして n問 質問させ、また止める（スクショ用。表示のタイマーは本物らしい残り時間）
+  const npcAsk = async (p, n) => { await p.evaluate(n => { const G = window.__sk.hostRoom().G; G._want = G.qa.filter(e => G.players[e.p].kind === 'npc').length + n; const L = window.SKL; if (!L._ask0) { L._ask0 = L.ask; L.ask = function (G2, p2, q2, now2, m2) { if (G2._noGuess && q2 && q2.w != null) return 'x'; return L._ask0.apply(this, arguments); }; } G._noGuess = true; G.npcNext = G.npcNext.map((_, i) => Date.now() + 200 + i * 350); }, n);
+    for (let k = 0; k < 100; k++) { const done = await p.evaluate(() => { const G = window.__sk.hostRoom().G; const c = G.qa.filter(e => G.players[e.p].kind === 'npc').length; if (c >= G._want) { G.npcNext = G.npcNext.map(() => Date.now() + 1e7); G._noGuess = false; return true; } return G.phase !== 'qa'; }); if (done) break; await sleep(60); }
+    await p.evaluate(() => { const G = window.__sk.hostRoom().G; G.deadline = Date.now() + 236000; }); await sleep(900); };
+  const freeze = (p, on) => p.evaluate(on => { const G = window.__sk.hostRoom().G; if (!G) return; if (on) { G._fz = G.npcNext.slice(); G.npcNext = G.npcNext.map(() => Date.now() + 1e7); G.deadline = Date.now() + 252000; if (G.phase === 'talk') G.at = Date.now() + 95000; } else { G.npcNext = G.npcNext.map(() => Date.now()); G.deadline = Date.now() + 8000; if (G.phase === 'talk') G.at = Date.now(); } }, on);
   async function layout(p, tag) {
     const r = await p.evaluate(() => {
       const vis = el => { const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || !el.getClientRects().length) return false; for (let e = el; e; e = e.parentElement) if (getComputedStyle(e).display === 'none') return false; return true; };
@@ -101,7 +105,8 @@ const MIC_MOCK = () => {
     await p.tap('#micBtn'); await p.evaluate(() => window.__say('えっと、それは食べものかな', true)); await p.tap('#micBtn'); await sleep(500);
     v = await view(p); const mq = v.g.log.find(e => e.t === 'q' && e.p === v.g.me && /食べもの/.test(e.text));
     mq ? ok('🎤 話した質問がそのまま質問に（「' + mq.text + '」）') : fail('mic question not posted');
-    await sleep(900);
+    await npcAsk(p, 4);
+    v = await view(p); v.g.log.filter(e => e.t === 'q' && e.p !== v.g.me).length >= 3 && v.g.phase === 'qa' ? ok('NPCたんていも質問している（' + v.g.log.filter(e => e.t === 'q' && e.p !== v.g.me).length + '問）') : fail('NPCs did not ask');
     await layout(p, 'qa'); await p.screenshot({ path: SS + 'e2e_06_qa.png' });
     // 🎯 答え（候補チップ）
     await p.tap('#ansBtn'); await p.fill('#msgIn', secret.w.slice(0, 1)); await p.dispatchEvent('#msgIn', 'input'); await sleep(150);

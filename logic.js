@@ -78,10 +78,10 @@ function nightNext(G, now) {
   else if (G.nstep === 'insider') { G.nstep = 'open'; G.at = now + G.T.open; sys(G, L.ROLE.insider.e + ' しってるっこは 目をとじて…'); }
   else startQA(G, now);
 }
-// おだいばん（人間）：お題を変える（知らない言葉のとき。公式ルールにはない、この版の追加。3回まで）
+// おだいばん（人間）：知らない言葉なら お題を変える（公式ルールどおり：知らない言葉なら別のお題にする）
 L.swap = function (G, p, now) {
   if (G.phase !== 'night' || G.nstep !== 'master' || p !== G.master) return 'いまは変えられません';
-  if (G.swaps >= 3) return 'お題の変更は3回までです';
+  if (G.swaps >= 30) return 'これ以上は かえられません';   // 公式：知らない言葉なら別のお題に。回数の制限はない（念のための上限だけ）
   G.swaps++; pickSecret(G, null); return null;
 };
 L.masterOk = function (G, p, now) { if (G.phase !== 'night' || G.nstep !== 'master' || p !== G.master) return 'いまは進められません'; G.at = now; return null; };
@@ -95,7 +95,8 @@ function startQA(G, now) {
 }
 function nextGap(G, i) {
   var ch = npc(G, i), L0 = B.LV[G.lv] || B.LV.normal, s = rr(G, L0.gap) * (ch ? ch.ps.gap : 1);
-  s *= 1 + 0.18 * G.humans;   // 人間が多いほど、NPCは ひかえめに（みんなが質問できるように）
+  // 人間がいるときは NPCは ひかえめに（人間が質問するすきまを残す）。NPCが多い卓ほど 一人あたりの間合いを広げる
+  if (G.humans > 0) { var asker = 0; G.players.forEach(function (pl, j) { if (pl.kind === 'npc' && j !== G.master) asker++; }); s *= (1 + 0.3 * G.humans) * Math.max(1, asker / 3); }
   return s * 1000 * G.T.k;
 }
 // 質問を出す。q = 文字列（人間）または {a, neg} / {w}（NPC）

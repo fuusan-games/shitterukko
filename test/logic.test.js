@@ -135,10 +135,10 @@ test('勝敗：時間切れ → 全員の負け／話し合い時間＝質問に
   const h2 = humanGame(R4); toV1Partial(h2);
   function toV1Partial(h) { const G = h.G; h.until('night'); h.until('qa', 3000); if (G.phase === 'night') { L.masterOk(G, 0, h.now); h.until('qa'); } for (let i = 0; i < 100; i++) h.T(); L.ask(G, 2, DB.words[G.secret].w + '？', h.now); h.until('talk'); assert.ok(Math.abs(G.talkDur - Math.max(G.T.talkMin, G.elapsed)) < 1 && G.elapsed >= 2900); }
 });
-test('ルール：おだいばんは質問できない・正解者は投票①に投票しない・お題変更は3回まで', () => {
+test('ルール：おだいばんは質問できない・正解者は投票①に投票しない・知らないお題はかえられる（公式どおり回数制限なし）', () => {
   const h = humanGame(R4); const G = h.G; h.until('night'); for (let i = 0; i < 200 && G.nstep !== 'master'; i++) h.T();
   assert.strictEqual(L.swap(G, 1, h.now), 'いまは変えられません');
-  for (let k = 0; k < 3; k++) assert.strictEqual(L.swap(G, 0, h.now), null); assert.ok(L.swap(G, 0, h.now));
+  const seen = new Set([G.secret]); for (let k = 0; k < 8; k++) { assert.strictEqual(L.swap(G, 0, h.now), null); seen.add(G.secret); } assert.ok(seen.size >= 8);
   L.masterOk(G, 0, h.now); h.until('qa'); assert.ok(L.ask(G, 0, '生き物？', h.now));
   L.ask(G, 3, '生き物？', h.now); assert.strictEqual(G.pending.length, 1); assert.ok(G.pending[0].human);
   assert.strictEqual(L.answer(G, 0, G.pending[0].qid, 'y', h.now), null);
