@@ -1,0 +1,171 @@
+/* しってるっこ：NPCの頭脳（ブラウザ／Node 共通・DOMなし）
+ * ① 推理：知識ベース上の全お題に確率を持ち、公開された Q&A でベイズ更新（マスターの答えまちがい・「わからない」も確率で扱う）
+ * ② 質問えらび：期待情報量（エントロピーの期待減少）が大きい質問を選ぶ。十分しぼれたら「それは○○？」と当てに行く
+ * ③ しってるっこ（インサイダー）：答えを知っているので「正解に近づく質問」を少しだけ選ぶ（σで強さ）。目立たないよう、ふつうの人と同じ式に“ひと味”足すだけ
+ * ④ 見やぶり：正解が出たあと、各質問が「正解の確率をどれだけ押し上げたか − 何も知らない人なら平均どれだけ上がるか（＝情報量）」＝ “知ってる人っぽさ（情報もれ）” を人ごとに集計
+ * 公開の推理（みんな共通）は Pub、NPC の性格・強さで 選び方と票の読みが変わる
+ */
+(function (root) {
+'use strict';
+var K = root.SKB, B = {};
+B.rng = K.rng;
+// ---------- パラメータ（tools/train.js が学習。範囲は [名前, 最小, 最大]） ----------
+B.PKEYS = [['tau', 0.01, 1.2], ['gTh', 0.2, 0.97], ['gLate', 0, 0.7], ['sig', 0, 4], ['sigLate', 0, 4], ['iTh', 0.15, 1.2], ['iEm', 0.5, 1.0], ['decoy', 0, 0.4],
+  ['iV1', 0, 1], ['wE', -1, 3], ['wM', -1, 3], ['wG', -1, 3], ['wB', -2, 2], ['wN', -1, 1], ['wV', -1, 2], ['th1', 0.2, 0.85]];
+B.HAND = { tau: 0.35, gTh: 0.6, gLate: 0.3, sig: 1.5, sigLate: 1.5, iTh: 0.5, iEm: 0.85, decoy: 0.05, iV1: 0.5, wE: 1, wM: 0.5, wG: 0.5, wB: 0.3, wN: 0, wV: 0.3, th1: 0.5 };
+B.toVec = function (P) { return B.PKEYS.map(function (k) { return P[k[0]]; }); };
+B.fromVec = function (v) { var P = {}; B.PKEYS.forEach(function (k, i) { P[k[0]] = Math.min(k[2], Math.max(k[1], v[i])); }); return P; };
+// 強さ：学習済み方針に どれだけ寄せるか(mix)、判断のブレ(noise)、質問のまちがい率(slop)、間合い(gap 秒)
+B.LV = {
+  easy:   { mix: 0.0, noise: 1.4, slop: 0.30, gap: [15, 23], sigX: 2.2, gThX: -0.25, name: 'やさしい' },
+  normal: { mix: 0.4, noise: 0.8, slop: 0.12, gap: [11, 17], sigX: 1.0, gThX: -0.08, name: 'ふつう' },
+  smart:  { mix: 0.8, noise: 0.35, slop: 0.03, gap: [9, 14], sigX: 0, gThX: 0, name: 'かしこい' },
+  ultra:  { mix: 1.0, noise: 0.0, slop: 0, gap: [8, 12], sigX: 0, gThX: 0, name: 'アストラウルトラ😎' }
+};
+B.levelP = function (P, lv) {   // 学習済み P と 手作り HAND をまぜる（弱いほど HAND＋ゆるさ）
+  var L = B.LV[lv] || B.LV.normal, out = {};
+  Object.keys(B.HAND).forEach(function (k) { out[k] = L.mix * (P[k] != null ? P[k] : B.HAND[k]) + (1 - L.mix) * B.HAND[k]; });
+  out.tau = out.tau + L.slop * 1.5; out.sig = out.sig + L.sigX; out.gTh = Math.max(0.15, out.gTh + L.gThX);
+  out.noise = L.noise; out.slop = L.slop; out.lv = lv;
+  return out;
+};
+
+// ---------- 公開の推理（Pub） ----------
+// pool：お題の候補（難しさの設定は公開なので、みんな知っている）。leak：候補外にも少し確率を残す
+B.pub = function (db, pool, o) {
+  o = o || {};
+  var N = db.N, lw = new Float64Array(N), inPool = new Uint8Array(N);
+  pool.forEach(function (i) { inPool[i] = 1; });
+  for (var i = 0; i < N; i++) lw[i] = inPool[i] ? 0 : Math.log(o.leak || 0.02);
+  return { db: db, N: N, lw: lw, dead: new Uint8Array(N), eps: o.eps != null ? o.eps : 0.04, du: 0.06, ua: 0.3, asked: {}, n: 0, cache: null };
+};
+function lik(S, truth, ans) {   // P(答え | 本当の属性値)
+  var e = S.eps, d = S.du;
+  if (truth === 2) return ans === 'u' ? 1 - 2 * S.ua : S.ua;
+  if (ans === 'u') return d;
+  return (ans === 'y') === (truth === 1) ? 1 - e - d : e;
+}
+B.probs = function (S) {
+  if (S.cache) return S.cache;
+  var N = S.N, mx = -Infinity, p = new Float64Array(N), i, s = 0;
+  for (i = 0; i < N; i++) if (!S.dead[i] && S.lw[i] > mx) mx = S.lw[i];
+  for (i = 0; i < N; i++) { p[i] = S.dead[i] ? 0 : Math.exp(S.lw[i] - mx); s += p[i]; }
+  for (i = 0; i < N; i++) p[i] /= s;
+  var top = 0; for (i = 1; i < N; i++) if (p[i] > p[top]) top = i;
+  S.cache = { p: p, top: top, pt: p[top] };
+  return S.cache;
+};
+// 答えを反映。rec = {a, neg, ans} or {w, ans}
+B.apply = function (S, rec) {
+  S.cache = null; S.n++;
+  if (rec.w != null) { if (rec.w >= 0 && rec.ans !== 'correct') S.dead[rec.w] = 1; return; }
+  var ans = rec.ans; if (rec.neg && ans !== 'u') ans = ans === 'y' ? 'n' : 'y';
+  var a = rec.a, words = S.db.words;
+  for (var i = 0; i < S.N; i++) S.lw[i] += Math.log(lik(S, words[i].v[a], ans));
+  S.asked[a] = (S.asked[a] || 0) + 1;
+};
+B.clone = function (S) { return { db: S.db, N: S.N, lw: new Float64Array(S.lw), dead: new Uint8Array(S.dead), eps: S.eps, du: S.du, ua: S.ua, asked: Object.assign({}, S.asked), n: S.n, cache: null }; };
+function H(arr, s) { var h = 0; for (var i = 0; i < arr.length; i++) { var q = arr[i] / s; if (q > 1e-12) h -= q * Math.log(q); } return h; }
+// 属性 a を聞いたときの 期待情報量（nats）と、答えごとの確率
+B.ig = function (S, a, pr) {
+  pr = pr || B.probs(S);
+  var p = pr.p, words = S.db.words, N = S.N, ans = ['y', 'n', 'u'], tot = 0, mi = 0;
+  var pa = [0, 0, 0];
+  // I(W;Ans) = Σ_w p(w) Σ_ans p(ans|w) log(p(ans|w)/p(ans))
+  var L = [[lik(S, 0, 'y'), lik(S, 0, 'n'), lik(S, 0, 'u')], [lik(S, 1, 'y'), lik(S, 1, 'n'), lik(S, 1, 'u')], [lik(S, 2, 'y'), lik(S, 2, 'n'), lik(S, 2, 'u')]];
+  var mass = [0, 0, 0];
+  for (var i = 0; i < N; i++) { if (p[i] < 1e-9) continue; mass[words[i].v[a]] += p[i]; }
+  for (var k = 0; k < 3; k++) for (var t = 0; t < 3; t++) pa[k] += mass[t] * L[t][k];
+  for (t = 0; t < 3; t++) { if (mass[t] < 1e-12) continue; for (k = 0; k < 3; k++) { var l = L[t][k]; if (l > 0 && pa[k] > 0) mi += mass[t] * l * Math.log(l / pa[k]); } }
+  return { ig: mi, pa: pa, mass: mass };
+};
+// 「正解 w が本当に答え」のとき、この質問で w の確率がどれだけ上がるか（log 比）。答え ans を使う
+B.gainFor = function (S, rec, w) {
+  var pr = B.probs(S), before = pr.p[w];
+  var T = B.clone(S); B.apply(T, rec); var after = B.probs(T).p[w];
+  return Math.log(Math.max(after, 1e-12) / Math.max(before, 1e-12));
+};
+// ---------- 質問えらび ----------
+function softPick(items, tau, r) {   // items: [{s}] スコアが大きいほど選ばれやすい
+  if (!items.length) return null;
+  var mx = -Infinity; items.forEach(function (x) { if (x.s > mx) mx = x.s; });
+  if (tau <= 0.011) return items.filter(function (x) { return x.s === mx; })[0];
+  var ws = items.map(function (x) { return Math.exp((x.s - mx) / tau); }), tot = ws.reduce(function (a, b) { return a + b; }, 0), u = r() * tot;
+  for (var i = 0; i < items.length; i++) { u -= ws[i]; if (u <= 0) return items[i]; }
+  return items[items.length - 1];
+}
+// 候補の質問を評価（聞きすぎの属性は外す）
+function attrCands(S, pr) {
+  var out = [], best = 0;
+  for (var a = 0; a < K.NA; a++) {
+    if (S.asked[a] >= 2) continue;
+    var r = B.ig(S, a, pr); if (r.ig < 1e-4) continue;
+    out.push({ a: a, ig: r.ig, mass: r.mass }); if (r.ig > best) best = r.ig;
+  }
+  return { list: out, best: best };
+}
+// ふつうの人（たんてい・おだいばんを除くNPC）が聞く質問。ctx = {frac:経過割合, r:乱数, wrong:{}(自分がもう外した単語)}
+B.chooseCommon = function (S, P, ctx) {
+  var pr = B.probs(S), r = ctx.r, th = Math.max(0.12, P.gTh - P.gLate * Math.max(0, ctx.frac - 0.5) * 2);
+  if (pr.pt >= th) return { w: pr.top, why: 'guess', p: pr.pt };
+  var C = attrCands(S, pr);
+  if (!C.list.length || C.best < 0.02) return { w: pr.top, why: 'guess', p: pr.pt };
+  var items = C.list.map(function (x) { return { a: x.a, s: x.ig / C.best, ig: x.ig }; });
+  var pk = softPick(items, P.tau, r);
+  return { a: pk.a, ig: pk.ig, why: 'ask' };
+};
+// しってるっこ（答え w を知っている）が聞く質問。公開の推理 S を見て、「ふつうに見えて、正解に寄る」質問を選ぶ
+B.chooseInsider = function (S, P, w, ctx) {
+  var pr = B.probs(S), r = ctx.r, frac = ctx.frac, pw = pr.p[w];
+  // 当てに行く：みんなが十分しぼれている（自然）／時間ぎれ寸前
+  if ((pr.top === w && pw >= P.iTh) || frac >= P.iEm) return { w: w, why: 'guess', p: pw };
+  // ときどき「それは○○？」とハズレを言って まぎれる（上位候補から）
+  if (P.decoy > 0 && r() < P.decoy * 0.5 && pr.top !== w && pr.pt > 0.15 && pr.pt < 0.6) return { w: pr.top, why: 'decoy', p: pr.pt };
+  var C = attrCands(S, pr); if (!C.list.length) return { w: w, why: 'guess', p: pw };
+  var sig = P.sig + (frac > 0.5 ? P.sigLate * (frac - 0.5) * 2 : 0);
+  var words = S.db.words, items = C.list.map(function (x) {
+    var t = words[w].v[x.a], ans = t === 1 ? 'y' : t === 0 ? 'n' : 'u';
+    var g = B.gainFor(S, { a: x.a, ans: ans }, w);
+    return { a: x.a, s: (x.ig + sig * (g - x.ig)) / C.best, ig: x.ig, ex: g - x.ig };
+  });
+  var pk = softPick(items, P.tau, r);
+  return { a: pk.a, ig: pk.ig, ex: pk.ex, why: 'steer' };
+};
+
+// ---------- 見やぶり（正解が出たあとに、全員の質問をふりかえる） ----------
+// qa: [{p, a, neg, ans} | {p, w, ans}]（公開ログの順）、wStar: 正解。戻り値：人ごとの特徴
+B.analyze = function (db, pool, qa, wStar, o) {
+  var S = B.pub(db, pool, o), per = {}, steps = [];
+  qa.forEach(function (q) {
+    var f = per[q.p] || (per[q.p] = { n: 0, ex: 0, mx: -9, best: null, guessLP: null, wrong: 0 });
+    var pr = B.probs(S), before = pr.p[wStar];
+    if (q.w != null && q.ans === 'correct') { f.guessLP = Math.log(Math.max(before, 1e-9)); steps.push({ p: q.p, guess: true, pb: before }); B.apply(S, q); return; }
+    var ig = q.a != null ? B.ig(S, q.a, pr).ig : (function () { var pw = q.w >= 0 ? pr.p[q.w] : 0; return pw > 0 && pw < 1 ? -(pw * Math.log(pw) + (1 - pw) * Math.log(1 - pw)) : 0; })();
+    var T = B.clone(S); B.apply(T, q); var after = B.probs(T).p[wStar];
+    var gain = Math.log(Math.max(after, 1e-12) / Math.max(before, 1e-12)), ex = gain - ig;
+    f.n++; f.ex += ex; if (ex > f.mx) { f.mx = ex; f.best = q; }
+    if (q.w != null) f.wrong++;
+    steps.push({ p: q.p, ex: ex, gain: gain, ig: ig, pb: before, pa: after });
+    B.apply(S, q);
+  });
+  return { per: per, steps: steps };
+};
+// 特徴 → 「しってるっこ度」スコア（大きいほど あやしい）
+B.score = function (P, f, isGuesser, v1yes) {
+  if (!f) f = { n: 0, ex: 0, mx: 0 };
+  var s = P.wE * f.ex / Math.sqrt(f.n + 1) + P.wM * Math.max(0, f.mx) + P.wN * Math.min(f.n, 10) / 5;
+  if (isGuesser) s += P.wB + P.wG * (f.guessLP != null ? Math.min(6, -f.guessLP) : 0);
+  if (v1yes) s += P.wV;
+  return s;
+};
+// cands の中で だれが しってるっこか（確率）。noise は強さ別のブレ
+B.suspect = function (P, an, cands, guesser, v1yes, r, noise) {
+  var sc = cands.map(function (j) { return B.score(P, an.per[j], j === guesser, v1yes && v1yes[j]) + (noise ? noise * gauss(r) : 0); });
+  var mx = Math.max.apply(null, sc), ex = sc.map(function (s) { return Math.exp(s - mx); }), t = ex.reduce(function (a, b) { return a + b; }, 0);
+  var out = {}; cands.forEach(function (j, i) { out[j] = ex[i] / t; });
+  return out;
+};
+function gauss(r) { var u = 0; while (!u) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); }
+B.gauss = gauss;
+if (typeof module !== 'undefined' && module.exports) module.exports = B; else root.SKBR = B;
+})(this);
