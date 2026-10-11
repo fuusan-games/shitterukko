@@ -114,7 +114,7 @@ L.ask = function (G, p, q, now, meta) {
   if (parsed.t === 'guess') {   // 「それは○○？」は 自動で判定（ことばが一致すれば正解）
     var ok = parsed.w === G.secret || (parsed.w < 0 && K.isAnswer(G.db, parsed.text, G.secret));
     if (ok) { resolve(G, e, 'correct', now, 'auto'); return null; }
-    if (isNpc(G, G.master) || parsed.w >= 0) { e.due = now + rr(G, G.T.npcAns) * (isNpc(G, G.master) ? 1 : 0.3); e.auto = 'n'; G.pending.push(e); return null; }
+    if (isNpc(G, G.master) || parsed.w >= 0) { e.due = now + rr(G, G.T.npcAns) * (isNpc(G, G.master) ? 1 : 0.3); e.auto = parsed.w >= 0 ? K.answerParsed(G.db, parsed, G.secret) : 'n'; if (e.auto === 'correct') e.auto = 'n'; G.pending.push(e); return null; }
   }
   if (isNpc(G, G.master)) { e.due = now + rr(G, G.T.npcAns); e.auto = K.answerParsed(G.db, parsed, G.secret); if (e.auto === 'correct') e.auto = 'n'; G.pending.push(e); }
   else { e.due = now + G.T.mAns; e.human = true; G.pending.push(e); }
@@ -136,12 +136,13 @@ function resolve(G, e, ans, now, by) {
   G.pending = G.pending.filter(function (x) { return x !== e; });
   e.ans = ans; e.by = by;
   var rec = null;
-  if (e.parsed.t === 'attr') rec = { p: e.p, a: e.parsed.a, neg: e.parsed.neg, ans: ans === 'correct' ? 'y' : ans };
+  if (e.parsed.t === 'attr') { rec = { p: e.p, a: e.parsed.a, neg: e.parsed.neg, ans: ans === 'correct' ? 'y' : ans }; if (e.parsed.also && e.parsed.also.length) rec.also = e.parsed.also; }
+  else if (e.parsed.t === 'fact' && ans !== 'correct') rec = { p: e.p, f: e.parsed.text, ans: ans };
   else if (e.parsed.t === 'guess' && e.parsed.w >= 0) rec = { p: e.p, w: e.parsed.w, ans: ans === 'correct' ? 'correct' : 'n' };
   else if (e.parsed.t === 'guess' && ans === 'correct') rec = { p: e.p, w: G.secret, ans: 'correct' };
   e.rec = rec; G.qa.push(e);
   var m = G.master, mline = null;
-  if (isNpc(G, m)) mline = ans === 'correct' ? line(G, m, 'correct') : ans === 'y' ? line(G, m, 'yes') : ans === 'n' ? line(G, m, 'no') : (e.parsed.t === 'none' && G.rng() < 0.6 ? line(G, m, 'unclear') : line(G, m, 'dunno'));
+  if (isNpc(G, m)) mline = ans === 'correct' ? line(G, m, 'correct') : ans === 'y' ? line(G, m, 'yes') : ans === 'n' ? line(G, m, 'no') : ((e.parsed.t === 'none' || e.parsed.t === 'fact') && G.rng() < 0.6 ? line(G, m, 'unclear') : line(G, m, 'dunno'));
   push(G, { t: 'a', qid: e.qid, p: e.p, ans: ans, say: mline, auto: by === 'timeout' ? 1 : 0 });
   if (rec && ans !== 'correct') B.apply(G.pub, rec);
   if (ans === 'correct') { found(G, e, now); return; }
@@ -475,6 +476,8 @@ L.view = function (G, p, now) {
   return v;
 };
 // おだいばん（人間）向け：知識ベースでの答えの目安（ボタンの横に小さく出す。まちがっていたら無視してOK）
-function hintFor(G, e) { if (e.parsed.t !== 'attr') return null; var a = K.answerParsed(G.db, e.parsed, G.secret); return { ans: a, attr: K.ATTRS[e.parsed.a].q, neg: !!e.parsed.neg }; }
+function hintFor(G, e) {
+  if (e.parsed.t === 'fact') { var fh = K.factHits(G.db, G.secret, e.parsed.text); var a0 = K.answerParsed(G.db, e.parsed, G.secret); return { ans: a0, attr: fh.length ? '「' + fh.map(function (h) { return h.s; }).join('・') + '」は お題に関係あり' : 'ずかんに のっていないことば', neg: false }; }
+  if (e.parsed.t !== 'attr') return null; var a = K.answerParsed(G.db, e.parsed, G.secret); return { ans: a, attr: K.ATTRS[e.parsed.a].q, neg: !!e.parsed.neg }; }
 if (typeof module !== 'undefined' && module.exports) module.exports = L; else root.SKL = L;
 })(this);

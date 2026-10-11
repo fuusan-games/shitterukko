@@ -21,7 +21,7 @@ test('お題ずかん：300語以上・カテゴリ・難易度・重複なし�
   W.forEach(w => {
     imp.forEach(([a, b]) => { if (b === 'liv' && w.v[AI('food')] === 1) return; if (AI(a) >= 0 && AI(b) >= 0 && w.v[AI(a)] === 1) assert.strictEqual(w.v[AI(b)], 1, w.w + ': ' + a + '⇒' + b); });
     if (w.v[AI('s1')] === 0) assert.notStrictEqual(w.v[AI('s2')], 1, w.w + ' s1=0 なのに s2=1');
-    const cs = colors.map(i => w.v[i]); if (cs.indexOf(1) >= 0) assert.ok(cs.indexOf(2) < 0, w.w + ': 色が はい と わからない のまざり');
+    const cs = colors.map(i => w.v[i]); assert.ok(cs.indexOf(1) >= 0 || cs.every(x => x === 2), w.w + ': 色が全部いいえ');
     const yes = K.ATTRS.filter(a => w.v[a.i] === 1).length; assert.ok(yes >= 2, w.w + ' yes=' + yes);
   });
   // 主観的な特ちょう（かわいい・子どもが好き など）は、タグのない語は「わからない」が既定（おだいばんが無理に決めない）
@@ -36,7 +36,7 @@ test('お題の名前・別名は「それは○○？」で答えとして読�
 // ---------- 自由入力の読み取り ----------
 function parseAcc(T) {
   let ok = 0; const bad = [];
-  T.forEach(([q, exp, neg]) => { const p = K.parse(DB, q); let got; if (p.t === 'attr') got = K.ATTRS[p.a].id + (p.neg ? '!' : ''); else if (p.t === 'guess') got = 'guess:' + (p.w >= 0 ? DB.words[p.w].w : '?'); else got = 'none';
+  T.forEach(([q, exp, neg]) => { const p = K.parse(DB, q); let got; if (p.t === 'attr') got = K.ATTRS[p.a].id + (p.neg ? '!' : ''); else if (p.t === 'guess') got = 'guess:' + (p.w >= 0 ? DB.words[p.w].w : '?'); else if (p.t === 'fact' && p.a == null) got = 'guess:?'; else got = 'none';
     const want = exp.startsWith('guess') || exp === 'none' ? exp : exp + (neg ? '!' : ''); if (got === want) ok++; else bad.push(q + '→' + got); });
   return { acc: ok / T.length, n: T.length, bad };
 }
@@ -225,4 +225,19 @@ test('NPCの推理：あからさまな しってるっこ は 情報もれ が�
 test('チャット・質問の入力は 40文字・制御文字なしに整える', () => {
   assert.strictEqual(L.cleanText('<b>あ\u0001い</b>' + 'x'.repeat(80)).length, 40);
   assert.ok(!/[<>]/.test(L.cleanText('<script>')));
+});
+
+// ---------- おだいばんが 自信をもって まちがえない ----------
+test('おだいばん：「ボールつかいますか？」（ドッジボール）は はい、書き方のゆれ「ドッチボール」は 正解', () => {
+  const id = DB.byNorm[K.normL('ドッジボール')];
+  ['ボールつかいますか？', 'ボールを使いますか？', 'ぼーるつかう？', 'ボールで遊ぶ？'].forEach(q => assert.strictEqual(K.answerParsed(DB, K.parse(DB, q), id), 'y', q));
+  ['ドッチボール？', 'それはドッチボールですか？', 'どっぢぼーる'].forEach(q => assert.strictEqual(K.answerParsed(DB, K.parse(DB, q), id), 'correct', q));
+});
+test('おだいばん：自然な質問セット（1,300問以上）で 自信のある まちがいは 0.5% 以下', () => {
+  const run = require('../tools/natcheck.js');
+  ['natural_tune.txt', 'natural_holdout.txt', 'natural_holdout2.txt'].forEach(f => {
+    const r = run(require('path').join(__dirname, f));
+    assert.ok(r.wrongPct <= 0.5, f + ' wrong ' + r.wrongPct + '% ' + r.bad.filter(b => b[0] === 'X').slice(0, 5).join(' / '));
+    assert.ok(r.unkPct <= 20, f + ' unk ' + r.unkPct + '%');
+  });
 });

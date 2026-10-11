@@ -35,6 +35,7 @@ function hostStartGame() {
     if (want === 'master') { roles[me] = 'master'; roles[others[0]] = 'insider'; } else if (want === 'insider') { roles[me] = 'insider'; roles[others[0]] = 'master'; } else { roles[others[0]] = 'master'; roles[others[1]] = 'insider'; }
     go.roles = roles;
   }
+  if (Q.get('testword')) { var tw = DB.byNorm[SKB.normL(Q.get('testword'))]; if (tw != null) go.secret = tw; }   // テスト用：お題を固定（?testword=ドッジボール）
   R.G = L.newGame(DB, PW, go);
   R.G.ultra = ultra;
   R.recent.push(R.G.secret); if (R.recent.length > 120) R.recent.shift();

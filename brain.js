@@ -59,22 +59,38 @@ B.probs = function (S) {
 B.apply = function (S, rec) {
   S.cache = null; S.n++;
   if (rec.w != null) { if (rec.w >= 0 && rec.ans !== 'correct') S.dead[rec.w] = 1; return; }
+  if (rec.f != null) {   // 「関係することば」の質問：お題ごとに はい(1)/いいえ(0)/わからない(2)
+    if (rec.ans === 'u') return;
+    var tv = factVec(S.db, rec);
+    for (var j = 0; j < S.N; j++) S.lw[j] += Math.log(lik(S, tv[j], rec.ans));
+    return;
+  }
   var ans = rec.ans; if (rec.neg && ans !== 'u') ans = ans === 'y' ? 'n' : 'y';
   var a = rec.a, words = S.db.words;
   for (var i = 0; i < S.N; i++) S.lw[i] += Math.log(lik(S, words[i].v[a], ans));
   S.asked[a] = (S.asked[a] || 0) + 1;
+  // 「ボールを蹴る？」のような組み合わせ：はい なら どれも はい
+  if (rec.also && rec.ans === 'y') rec.also.forEach(function (x) { var an = x.neg ? 'n' : 'y'; for (var k = 0; k < S.N; k++) S.lw[k] += Math.log(lik(S, words[k].v[x.a], an)); });
 };
+function factVec(db, rec) {
+  if (rec._tv && rec._tv.length === db.N) return rec._tv;
+  var tv = new Uint8Array(db.N), p = { text: rec.f };
+  for (var i = 0; i < db.N; i++) tv[i] = K.factTruth(db, i, p);
+  try { Object.defineProperty(rec, '_tv', { value: tv, enumerable: false, configurable: true, writable: true }); } catch (e) {}
+  return tv;
+}
+B.factVec = factVec;
 B.clone = function (S) { return { db: S.db, N: S.N, lw: new Float64Array(S.lw), dead: new Uint8Array(S.dead), eps: S.eps, du: S.du, ua: S.ua, asked: Object.assign({}, S.asked), n: S.n, cache: null }; };
 function H(arr, s) { var h = 0; for (var i = 0; i < arr.length; i++) { var q = arr[i] / s; if (q > 1e-12) h -= q * Math.log(q); } return h; }
 // 属性 a を聞いたときの 期待情報量（nats）と、答えごとの確率
-B.ig = function (S, a, pr) {
+B.ig = function (S, a, pr, tvec) {
   pr = pr || B.probs(S);
   var p = pr.p, words = S.db.words, N = S.N, ans = ['y', 'n', 'u'], tot = 0, mi = 0;
   var pa = [0, 0, 0];
   // I(W;Ans) = Σ_w p(w) Σ_ans p(ans|w) log(p(ans|w)/p(ans))
   var L = [[lik(S, 0, 'y'), lik(S, 0, 'n'), lik(S, 0, 'u')], [lik(S, 1, 'y'), lik(S, 1, 'n'), lik(S, 1, 'u')], [lik(S, 2, 'y'), lik(S, 2, 'n'), lik(S, 2, 'u')]];
   var mass = [0, 0, 0];
-  for (var i = 0; i < N; i++) { if (p[i] < 1e-9) continue; mass[words[i].v[a]] += p[i]; }
+  for (var i = 0; i < N; i++) { if (p[i] < 1e-9) continue; mass[tvec ? tvec[i] : words[i].v[a]] += p[i]; }
   for (var k = 0; k < 3; k++) for (var t = 0; t < 3; t++) pa[k] += mass[t] * L[t][k];
   for (t = 0; t < 3; t++) { if (mass[t] < 1e-12) continue; for (k = 0; k < 3; k++) { var l = L[t][k]; if (l > 0 && pa[k] > 0) mi += mass[t] * l * Math.log(l / pa[k]); } }
   return { ig: mi, pa: pa, mass: mass };
@@ -140,7 +156,7 @@ B.analyze = function (db, pool, qa, wStar, o) {
     var f = per[q.p] || (per[q.p] = { n: 0, ex: 0, mx: -9, best: null, guessLP: null, wrong: 0 });
     var pr = B.probs(S), before = pr.p[wStar];
     if (q.w != null && q.ans === 'correct') { f.guessLP = Math.log(Math.max(before, 1e-9)); steps.push({ p: q.p, guess: true, pb: before }); B.apply(S, q); return; }
-    var ig = q.a != null ? B.ig(S, q.a, pr).ig : (function () { var pw = q.w >= 0 ? pr.p[q.w] : 0; return pw > 0 && pw < 1 ? -(pw * Math.log(pw) + (1 - pw) * Math.log(1 - pw)) : 0; })();
+    var ig = q.f != null ? B.ig(S, -1, pr, factVec(db, q)).ig : q.a != null ? B.ig(S, q.a, pr).ig : (function () { var pw = q.w >= 0 ? pr.p[q.w] : 0; return pw > 0 && pw < 1 ? -(pw * Math.log(pw) + (1 - pw) * Math.log(1 - pw)) : 0; })();
     var T = B.clone(S); B.apply(T, q); var after = B.probs(T).p[wStar];
     var gain = Math.log(Math.max(after, 1e-12) / Math.max(before, 1e-12)), ex = gain - ig;
     f.n++; f.ex += ex; if (ex > f.mx) { f.mx = ex; f.best = q; }
