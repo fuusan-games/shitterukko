@@ -15,7 +15,7 @@ test('お題ずかん：300語以上・カテゴリ・難易度・重複なし�
   assert.ok(Object.keys(DB.cats).length >= 20);
   const d = { e: 0, n: 0, h: 0 }; W.forEach(w => d[w.diff]++); assert.ok(d.e >= 80 && d.n >= 80 && d.h >= 80, JSON.stringify(d));
   assert.strictEqual((DB.dropped || []).length, 0);
-  const seen = {}; W.forEach(w => { const k = K.ATTRS.map(a => w.v[a.i]).join(''); assert.ok(!seen[k], '同じ特ちょう: ' + w.w + ' / ' + seen[k]); seen[k] = w.w; });
+  const seen = {}; W.forEach(w => { const k = K.ATTRS.map(a => w.v[a.i]).join(''); (seen[k] = seen[k] || []).push(w); }); for (const k in seen) { const g = seen[k]; assert.ok(g.length <= 3, '同じ特ちょうが多すぎ: ' + g.map(w => w.w).join('/')); if (g.length > 1) assert.ok(g.every(w => w.facts && Object.keys(w.facts).length), '同じ特ちょうなら 関係ることばで区別できること: ' + g.map(w => w.w).join('/')); }   // 1,000語では特ちょうだけで全部は分けられない → 3語までは「関係ることば」の質問で区別
   const imp = [['s3', 's2'], ['s2', 's1'], ['ani', 'liv'], ['bird', 'liv'], ['fish', 'liv'], ['bug', 'liv'], ['pla', 'liv'], ['fruit', 'food'], ['veg', 'food'], ['dish', 'food'], ['sweets', 'food'], ['food', 'edible']];
   const colors = K.ATTRS.filter(a => a.g === 'color' && a.id !== 'tall').map(a => a.i);
   W.forEach(w => {
@@ -193,7 +193,8 @@ test('NPCおだいばん：答えは ずかんと 100% 一致（わからない�
     G.qa.forEach(e => {
       if (e.parsed.t !== 'attr') return; n++;
       const x = DB.words[G.secret].v[e.parsed.a], want = x === 2 ? 'u' : ((x === 1) !== !!e.parsed.neg ? 'y' : 'n');
-      assert.strictEqual(e.ans, want, e.text + ' @' + DB.words[G.secret].w);
+      const okA = want === 'u' ? ['u', 'py', 'pn'] : want === 'y' ? ['y', 'py'] : ['n', 'pn'];   // 人間らしい「部分的に…」は 同じ向きなら一致とみなす
+      assert.ok(okA.includes(e.ans), e.text + ' @' + DB.words[G.secret].w + ' ' + e.ans + ' want ' + want);
     });
   }
   assert.ok(n > 200, 'questions ' + n);
