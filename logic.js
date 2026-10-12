@@ -89,7 +89,7 @@ L.masterOk = function (G, p, now) { if (G.phase !== 'night' || G.nstep !== 'mast
 // ---------- 質問タイム ----------
 function startQA(G, now) {
   G.phase = 'qa'; G.qStart = now; G.deadline = now + G.limit; G.lastQ = now;
-  sys(G, '☀️ みんな 目をあけて！ ⏳ 質問タイム スタート（' + Math.round(G.limitSec / 60 * 10) / 10 + '分）。おだいばんは「はい・いいえ・わからない」だけで答えます', { big: 1 });
+  sys(G, '☀️ みんな 目をあけて！ ⏳ 質問タイム スタート（' + Math.round(G.limitSec / 60 * 10) / 10 + '分）。おだいばんはボタン（はい・いいえ・部分的に…・わからない・近い）で答えます', { big: 1 });
   var m = G.master; if (isNpc(G, m)) say(G, m, line(G, m, 'open'), 'talk', 300 * G.T.k, now);
   G.players.forEach(function (pl, i) { if (pl.kind === 'npc' && i !== G.master) G.npcNext[i] = now + nextGap(G, i) * (0.3 + 0.7 * G.rng()); });
 }

@@ -28,10 +28,17 @@ function hostStartGame() {
   for (var i = players.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = players[i]; players[i] = players[j]; players[j] = t; }   // 席をまぜる
   var ultra = R.opts.lv === 'ultra', o = R.opts;
   var go = { players: players, lv: o.lv, diff: o.diff, limit: o.limit, follower: o.follower && n >= 6, blackGuess: o.blackGuess, turbo: TURBO, recent: R.recent, now: Date.now() + (ultra && !TURBO ? 7000 : 0) };
-  if (Q.get('testrole') && R.seats.length === 1) {   // テスト用：自分（ホスト）の役わりを固定（?testrole=master|insider|common）。ひとりのときだけ
+  var wantMaster = R.seats.length === 1 && R.opts.myRole === 'master';
+  if (wantMaster) {   // ひとりで「自分がおだいばん」：お題を自分で決められる
+    var mt = ($('myTopic') && $('myTopic').value || '').trim();
+    if (mt) { var tw0 = DB.byNorm[SKB.normL(mt)]; if (tw0 == null) { var nn = SKB.nearName(DB, SKB.normL(mt)); tw0 = nn && nn.w != null ? nn.w : (typeof nn === 'number' ? nn : null); }
+      if (tw0 == null || tw0 < 0) { toast('「' + mt + '」は ずかんに ないことばです。べつの書き方か、空欄（おまかせ）でどうぞ'); R.gameNo--; return; }
+      go.secret = tw0; }
+  }
+  if ((Q.get('testrole') || wantMaster) && R.seats.length === 1) {   // テスト用：自分（ホスト）の役わりを固定（?testrole=master|insider|common）。ひとりのときだけ
     var me = 0; players.forEach(function (pl, k) { if (pl.kind === 'human' && pl.sid === 1) me = k; });
     var roles = new Array(n).fill('common'), others = []; for (var k = 0; k < n; k++) if (k !== me) others.push(k);
-    var want = Q.get('testrole');
+    var want = wantMaster ? 'master' : Q.get('testrole');
     if (want === 'master') { roles[me] = 'master'; roles[others[0]] = 'insider'; } else if (want === 'insider') { roles[me] = 'insider'; roles[others[0]] = 'master'; } else { roles[others[0]] = 'master'; roles[others[1]] = 'insider'; }
     go.roles = roles;
   }

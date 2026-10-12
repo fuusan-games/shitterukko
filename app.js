@@ -47,6 +47,7 @@ $('mPanel').addEventListener('click', function (e) {
   var b = e.target.closest('button[data-ans]'); if (!b || !lastView || !lastView.g || !lastView.g.toAnswer) return;
   var ans = b.dataset.ans, qid = lastView.g.toAnswer.qid;
   if (ans === 'correct') confirmBox('正解にしますか？', '「' + lastView.g.toAnswer.text + '」を お題と同じ意味とみなして 正解にします。', '🎯 正解にする', function () { act('answer', { qid: qid, ans: 'correct' }); });
+  else if (ans === 'near') act('answer', { qid: qid, ans: 'pn', note: '近い' });   // 「いいえ、でも近い」
   else act('answer', { qid: qid, ans: ans });
 });
 $('v1Btns').addEventListener('click', function (e) {
@@ -96,6 +97,7 @@ $('npcGrid').addEventListener('click', function (e) {
 });
 function segClick(id, fn) { $(id).addEventListener('click', function (e) { var b = e.target.closest('button[data-v]'); if (!b || b.disabled || !host || host.room.phase !== 'lobby') return; fn(b.dataset.v); hostBroadcast(); }); }
 segClick('lvSeg', function (v) { host.room.opts.lv = v; });
+segClick('roleSeg', function (v) { host.room.opts.myRole = v; });
 segClick('diffSeg', function (v) { host.room.opts.diff = v; });
 segClick('limitSeg', function (v) { host.room.opts.limit = +v; });
 segClick('folSeg', function (v) { host.room.opts.follower = v === 'on'; });

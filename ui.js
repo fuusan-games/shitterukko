@@ -66,6 +66,8 @@ function renderLobby(v) {
   var tot = n + o.npcs.length, bad = tot < MIN_TOTAL || tot > MAX_TOTAL;
   $('totalLine').textContent = '合計 ' + tot + '人（人間' + n + '・NPC' + o.npcs.length + '）' + (tot < MIN_TOTAL ? ' → ' + MIN_TOTAL + '人以上にしてね' : tot > MAX_TOTAL ? ' → ' + MAX_TOTAL + '人までです' : '');
   $('totalLine').classList.toggle('bad', bad);
+  seg('roleSeg', [['rand', 'おまかせ'], ['master', '自分が おだいばん（親）']], o.myRole || 'rand', isHost);
+  $('roleCard').style.display = n === 1 ? '' : 'none'; $('myTopicBox').style.display = n === 1 && o.myRole === 'master' ? '' : 'none';
   seg('lvSeg', [['easy', 'やさしい'], ['normal', 'ふつう'], ['smart', 'かしこい'], ['ultra', 'アストラ<br>ウルトラ😎']], o.lv, isHost);
   seg('diffSeg', [['easy', 'かんたん'], ['normal', 'ふつう'], ['hard', 'むずかしい'], ['all', 'ぜんぶ']], o.diff, isHost);
   seg('limitSeg', [[180, '3分'], [240, '4分'], [300, '5分<small>きほん</small>'], [420, '7分'], [600, '10分']], o.limit, isHost);

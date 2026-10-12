@@ -447,6 +447,10 @@ body.solo .net-only{display:none!important}
   <div class="card net-only"><div class="row" style="align-items:center"><div class="lab" style="margin:0">参加者（人間）</div><div class="lab" id="seatCount" style="text-align:right;margin:0"></div></div><div id="seatList"></div><p class="hint" id="seatHint"></p></div>
   <div class="card"><div class="lab">いっしょに遊ぶNPC（タップで入れる／外す）</div><div class="npcGrid" id="npcGrid"></div><div class="totalLine" id="totalLine"></div>
     <p class="hint">合計4〜8人。おすすめは5〜6人。NPCも おだいばん・しってるっこ・たんてい の どの役でもこなします。</p></div>
+  <div class="card" id="roleCard"><div class="lab">自分の役わり（ひとりで遊ぶとき）</div><div class="seg" id="roleSeg"></div>
+    <div id="myTopicBox" style="display:none;margin-top:10px"><div class="lab">お題を自分で決める（空欄なら おまかせ）</div>
+    <input id="myTopic" type="text" maxlength="30" placeholder="例：メイドインアビス" autocomplete="off" style="width:100%;font-size:16px;padding:10px;border-radius:12px;border:2px solid #ddd;box-sizing:border-box">
+    <p class="hint">NPCたちが質問して当てにきます。あなたは ボタン（はい・いいえ・部分的に…・わからない・正解）で答えてね。お題は ほかの人には見えません。</p></div></div>
   <div class="card"><div class="lab">NPCの強さ</div><div class="seg" id="lvSeg"></div>
     <div class="lab" style="margin-top:10px">お題のむずかしさ</div><div class="seg" id="diffSeg"></div>
     <div class="lab" style="margin-top:10px">質問タイムの制限時間</div><div class="seg" id="limitSeg"></div>
@@ -472,7 +476,7 @@ body.solo .net-only{display:none!important}
       <div class="actLab" id="actLab"></div>
       <div id="mPanel" style="display:none"><div id="mQ"></div><div id="mHint"></div>
         <div class="mbtns"><button class="y" data-ans="y">⭕ はい</button><button class="n" data-ans="n">❌ いいえ</button><button class="u" data-ans="u">🤷 わからない</button></div>
-        <div class="mbtns mbtns2"><button class="py" data-ans="py">🔶 部分的にそう</button><button class="pn" data-ans="pn">🔸 部分的に違う</button><button class="sp" data-ans="sp">➡️ もっと具体的に</button></div>
+        <div class="mbtns mbtns2"><button class="py" data-ans="py">🔶 部分的にそう</button><button class="pn" data-ans="pn">🔸 部分的に違う</button><button class="sp" data-ans="sp">➡️ もっと具体的に</button><button class="pn" data-ans="near">🤏 近い</button></div>
         <button class="ok" data-ans="correct">🎯 お題と同じ意味！ 正解にする</button></div>
       <div class="v1Btns" id="v1Btns" style="display:none"><button class="yes" data-y="1">🙋 しってるっこ！</button><button class="no" data-y="0">🙅 ちがうと思う</button></div>
       <div class="voteGrid" id="voteGrid" style="display:none"></div>
