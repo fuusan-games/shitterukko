@@ -565,4 +565,19 @@ add('elec', `
 ATM 2 h money city | お金/おかね 銀行/ぎんこう
 `);
 
+add('title', `
+メイドインアビス 0 h screen chara ?touch ?elec ?danger -kids | アニメ 漫画/まんが ファンタジー 冒険/ぼうけん 穴/あな 深い/ふかい 怪物/かいぶつ 呪い/のろい 探窟家/たんくつか リコ レグ ダーク
+葬送のフリーレン/フリーレン 0 n screen chara ?touch ?elec -kids | アニメ 漫画/まんが ファンタジー 魔法/まほう 冒険/ぼうけん エルフ 勇者/ゆうしゃ
+ダンジョン飯/ダンジョンめし 0 h screen chara ?touch ?elec -kids | アニメ 漫画/まんが ファンタジー ダンジョン 料理/りょうり 魔物/まもの 冒険/ぼうけん
+進撃の巨人/しんげきのきょじん 0 n screen chara ?touch ?elec danger -kids fight | アニメ 漫画/まんが 巨人/きょじん 壁/かべ 怪物/かいぶつ
+呪術廻戦/じゅじゅつかいせん 0 n screen chara ?touch ?elec danger -kids fight school | アニメ 漫画/まんが 呪い/のろい 呪術/じゅじゅつ 少年漫画/しょうねんまんが
+チェンソーマン 0 n screen chara ?touch ?elec danger -kids fight | アニメ 漫画/まんが 悪魔/あくま 少年漫画/しょうねんまんが
+鋼の錬金術師/ハガレン/はがねのれんきんじゅつし 0 n screen chara ?touch ?elec -kids fight | アニメ 漫画/まんが ファンタジー 錬金術/れんきんじゅつ 兄弟/きょうだい
+転生したらスライムだった件/転スラ 0 h screen chara ?touch ?elec | アニメ 転生/てんせい ファンタジー スライム
+SPY×FAMILY/スパイファミリー 0 n screen chara ?touch ?elec home | アニメ 漫画/まんが スパイ 家族/かぞく
+チャットGPT/ChatGPT/チャットジーピーティー 0 n app online elec screen ?touch -chara | AI/えーあい 人工知能/じんこうちのう チャット 会話/かいわ 文章/ぶんしょう 質問/しつもん ソフト アプリ 仕事/しごと 勉強/べんきょう パソコン スマホ
+エクセル/Excel 0 h app elec screen ?touch -chara | 表/ひょう 計算/けいさん ソフト 仕事/しごと パソコン
+ワード/Word 0 h app elec screen ?touch -chara | 文書/ぶんしょ 文字/もじ ソフト 仕事/しごと パソコン
+グーグルマップ 0 h app online elec screen -chara | 地図/ちず 道/みち スマホ
+`);
 })(this.SK_TOPICS, this.SK_FACTS);

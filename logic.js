@@ -139,6 +139,7 @@ function hintKeys(G, note) {
   var t = String(note);
   HINTK.forEach(function (h) { var i = K.ATTRS.findIndex(function (a) { return a.id === h[1]; }); if (i >= 0 && h[0].test(t)) { var r = { p: -1, a: i, neg: false, ans: h[2] === 'y' ? 'py' : 'pn' }; B.apply(G.pub, r); } });
 }
+L.hintKeys = hintKeys;
 function nearRank(G, w) { var nv = B.nearVec(G.db, w), me = nv[G.secret], k = 0; for (var j = 0; j < G.db.N; j++) if (j !== w && nv[j] > me) k++; return k; }
 function resolve(G, e, ans, now, by, note) {
   G.pending = G.pending.filter(function (x) { return x !== e; });

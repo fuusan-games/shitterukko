@@ -25,6 +25,7 @@ function submitInput() {
     if (act('askG', t)) { inp.value = ''; ui.ansMode = false; render(lastView); }
   } else if (mode === 'mchat' || mode === 'chat') {
     var mv = mode === 'mchat' && v.g.toAnswer ? masterWord(t) : null;
+    if (mode === 'mchat' && v.g.toAnswer && /^\s*(yep|yeah|aye|yup|ye)\s*[.!]?\s*$/i.test(t)) { toast('「はい」と「いいえ」どっち？ ボタンでえらんでね'); return; }   // 音声のあいまいな聞き取り
     if (mv) { act('answer', { qid: v.g.toAnswer.qid, ans: mv, note: t.length > 3 ? t.slice(0, 40) : '' }); inp.value = ''; return; }
     if (act('chat', t)) inp.value = '';
   }

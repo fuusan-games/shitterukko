@@ -55,7 +55,7 @@ items: `
 ハンガー 2 h tool ?wear
 しゃしん/写真 1 h paper square
 `};
-T.elec = { name: '電気のもの', kind: 'obj', base: 'home elec tool store -liv -edible -wood',
+T.elec = { name: '電気のもの', kind: 'obj', base: 'home elec tool store -liv -edible -wood -app',
 items: `
 テレビ 2 e square black light sound screen ?online
 れいぞうこ/冷蔵庫 3 e cold kitchen square white contain
