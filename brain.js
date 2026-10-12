@@ -92,6 +92,8 @@ function factVec(db, rec) {
 B.factVec = factVec;
 // お題 w に「近い」お題ほど大きい値（同じカテゴリ・特ちょうの一致・関係ることばのつながり）
 var NEARC = {};
+function factSet(x) { if (!x._fs) { x._fs = {}; (x.facts || []).forEach(function (g) { g.forEach(function (t) { x._fs[K.normL(t)] = 1; }); }); } return x._fs; }
+function hasName(a, b) { var fs = factSet(a); return b.n.some(function (x) { return x.length >= 2 && fs[K.normL(x)]; }); }   // a の関係ることばに b の名前がある
 function nearVec(db, w) {
   if (NEARC[w] && NEARC[w].length === db.N) return NEARC[w];
   var out = new Float64Array(db.N), a = db.words[w];
@@ -99,7 +101,7 @@ function nearVec(db, w) {
     var b = db.words[j], same = 0, tot = 0;
     for (var i = 0; i < K.NA; i++) { if (a.v[i] === 2 || b.v[i] === 2) continue; if (a.v[i] === 1 || b.v[i] === 1) { tot++; if (a.v[i] === b.v[i]) same++; } }
     var sim = tot ? same / tot : 0, link = 0;
-    if (b.n.some(function (x) { return x.length >= 2 && K.factHits(db, w, x).length; }) || a.n.some(function (x) { return x.length >= 2 && K.factHits(db, j, x).length; })) link = 1;
+    if (hasName(a, b) || hasName(b, a)) link = 1;
     out[j] = 2.5 * sim + (a.cat === b.cat ? 0.8 : 0) + 1.6 * link;
   }
   var m = 0; for (j = 0; j < db.N; j++) m += out[j]; m /= db.N; for (j = 0; j < db.N; j++) out[j] -= m;
