@@ -28,14 +28,16 @@ function hostStartGame() {
   for (var i = players.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = players[i]; players[i] = players[j]; players[j] = t; }   // 席をまぜる
   var ultra = R.opts.lv === 'ultra', o = R.opts;
   var go = { players: players, lv: o.lv, diff: o.diff, limit: o.limit, follower: o.follower && n >= 6, blackGuess: o.blackGuess, turbo: TURBO, recent: R.recent, now: Date.now() + (ultra && !TURBO ? 7000 : 0) };
-  if (Q.get('testrole')) {   // テスト用：自分（ホスト）の役わりを固定（?testrole=master|insider|common）
+  if (Q.get('testrole') && R.seats.length === 1) {   // テスト用：自分（ホスト）の役わりを固定（?testrole=master|insider|common）。ひとりのときだけ
     var me = 0; players.forEach(function (pl, k) { if (pl.kind === 'human' && pl.sid === 1) me = k; });
     var roles = new Array(n).fill('common'), others = []; for (var k = 0; k < n; k++) if (k !== me) others.push(k);
     var want = Q.get('testrole');
     if (want === 'master') { roles[me] = 'master'; roles[others[0]] = 'insider'; } else if (want === 'insider') { roles[me] = 'insider'; roles[others[0]] = 'master'; } else { roles[others[0]] = 'master'; roles[others[1]] = 'insider'; }
     go.roles = roles;
   }
-  if (Q.get('testword')) { var tw = DB.byNorm[SKB.normL(Q.get('testword'))]; if (tw != null) go.secret = tw; }   // テスト用：お題を固定（?testword=ドッジボール）
+  // テスト用：お題を固定（?testword=ドッジボール&debug=sk-test）。ズルに使えないよう、人間がホスト1人だけ（オンラインの参加者なし）のときだけ有効
+  var solo = R.seats.length === 1;
+  if (Q.get('testword') && Q.get('debug') === 'sk-test' && solo) { var tw = DB.byNorm[SKB.normL(Q.get('testword'))]; if (tw != null) { go.secret = tw; toast('🧪 テストモード：お題を固定しています'); } }
   R.G = L.newGame(DB, PW, go);
   R.G.ultra = ultra;
   R.recent.push(R.G.secret); if (R.recent.length > 120) R.recent.shift();
@@ -78,7 +80,7 @@ function hostAction(sid, m) {
     if (a === 'askA') { var at = +m.v; if (!(at >= 0 && at < B.ATTRS.length)) return 'その質問はえらべません'; err = L.ask(G, p, { a: at }, now, { text: B.ATTRS[at].q }); }
     else err = L.ask(G, p, String(m.v || ''), now, a === 'askG' ? { guess: true } : null);
   }
-  else if (a === 'answer') err = L.answer(G, p, +(m.v && m.v.qid), String(m.v && m.v.ans), now);
+  else if (a === 'answer') err = L.answer(G, p, +(m.v && m.v.qid), String(m.v && m.v.ans), now, m.v && m.v.note ? String(m.v.note).slice(0, 40) : '');
   else if (a === 'swap') err = L.swap(G, p, now);
   else if (a === 'masterOk') err = L.masterOk(G, p, now);
   else if (a === 'vote1') err = L.vote1(G, p, !!m.v, now);

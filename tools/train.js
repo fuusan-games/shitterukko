@@ -16,9 +16,9 @@ function game(P, words, seed, g, opt) {
   const insHuman = !thetaIns && r() < 0.45, insHand = !thetaIns && !insHuman && r() < 0.4;
   if (insHuman) humans.add(idx[1]);
   for (let k = 2; humans.size < h && k < n; k++) humans.add(idx[k]);
-  if (humans.size < h && r() < 0.5) humans.add(idx[0]);   // ときどき人間がマスター
+  if (r() < 0.45) humans.add(idx[0]);   // ときどき人間がマスター
   for (let i = 0; i < n; i++) {
-    if (humans.has(i)) { seats[i] = { kind: 'human', hb: humanBot(r) }; continue; }
+    if (humans.has(i)) { const hb = humanBot(r); if (roles[i] === 'master' && r() < 0.7) Object.assign(hb, { hedge: true, note: 0.2 }); seats[i] = { kind: 'human', hb }; continue; }   // 人間のおだいばんは あいまいに答えることが多い
     if (roles[i] === 'insider') seats[i] = { kind: 'npc', P: thetaIns ? P : insHand ? opt.hand : P };
     else seats[i] = { kind: 'npc', P: thetaIns ? (r() < 0.5 ? P : opt.hand) : P, noise: thetaIns ? 0.3 : 0 };
   }
@@ -56,7 +56,11 @@ function randn(r) { let u = 0; while (!u) u = r(); return Math.sqrt(-2 * Math.lo
   const t0 = Date.now(), rng = B.rng(777), sp = S.split();
   console.log(`words: train ${sp.train.length} / held-out test ${sp.test.length}; params ${D}; workers ${NW}; λ=${LAMBDA} μ=${MU}; ${GENS} gens × ${GAMES} games`);
   const w = []; for (let i = 0; i < MU; i++) w.push(Math.log(MU + 0.5) - Math.log(i + 1)); const ws = w.reduce((a, b) => a + b); for (let i = 0; i < MU; i++) w[i] /= ws;
-  let mean = toU(B.toVec(B.HAND)), sigma = 0.18, best = null, curve = [];
+  // 前回の学習ずみ重みから続きを学習（新しいパラメータは手作りの初期値）
+  const PREV = Object.assign({}, B.HAND, (S.C.SK_WEIGHTS && S.C.SK_WEIGHTS.P) || {});
+  let mean = toU(B.toVec(PREV)), sigma = 0.12, best = null, curve = [];
+  const prevR = await evalVec(B.toVec(PREV), 99, GAMES * 3, 'test');
+  console.log('previous weights on test words:', JSON.stringify(prevR));
   const before = await evalVec(B.toVec(B.HAND), 99, GAMES * 3, 'test');
   console.log('hand-tuned on test words:', JSON.stringify(before));
   for (let gen = 0; gen < GENS; gen++) {
@@ -79,8 +83,8 @@ function randn(r) { let u = 0; while (!u) u = r(); return Math.sqrt(-2 * Math.lo
   const P = B.fromVec(fromU(pick.u)); Object.keys(P).forEach(k => P[k] = Math.round(P[k] * 10000) / 10000);
   const after = await evalVec(B.toVec(P), 99, GAMES * 3, 'test');
   console.log('trained on test words:', JSON.stringify(after));
-  fs.writeFileSync(path.join(__dirname, '..', 'weights.js'), '/* しってるっこ：学習済みのNPCパラメータ（tools/train.js が自己対戦で学習して書き出したファイル。手で編集しない） */\nthis.SK_WEIGHTS = ' + JSON.stringify({ P, trainedAt: new Date().toISOString(), gens: GENS, games: GAMES }, null, 1) + ';\n');
-  fs.writeFileSync(path.join(__dirname, 'train-report.json'), JSON.stringify({ heldOutWords: sp.test.length, before, after, P, curve }, null, 1));
+  fs.writeFileSync(path.join(__dirname, '..', 'weights.js'), '/* しってるっこ：学習済みのNPCパラメータ（tools/train.js が自己対戦で学習して書き出したファイル。手で編集しない） */\nthis.SK_WEIGHTS = ' + JSON.stringify({ P, trainedAt: new Date().toISOString(), gens: GENS + ((S.C.SK_WEIGHTS && S.C.SK_WEIGHTS.gens) || 0), games: GAMES }, null, 1) + ';\n');
+  fs.writeFileSync(path.join(__dirname, 'train-report.json'), JSON.stringify({ heldOutWords: sp.test.length, before, previous: prevR, after, P, curve }, null, 1));
   console.log('wrote weights.js', JSON.stringify(P), ((Date.now() - t0) / 1000).toFixed(0) + 's');
   process.exit(0);
 })();

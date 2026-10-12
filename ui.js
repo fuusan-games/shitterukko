@@ -2,7 +2,7 @@
 'use strict';
 var ui = { gameKey: '', lid: 0, endKey: '', deadline: 0, hide: load(LS_HIDE) === '1', mode: '', ansMode: false, qbOpen: false, qbTab: 'kind', voteKey: '', lastTurnKey: '', awakened: '', tickSec: -1, sfxAt: 0, nightKey: '', dealKey: '', toAnsKey: '', suggKey: '', foundKey: '', revealKey: '' };
 var ROLE_DESC = {
-  master: 'お題を知っている 司会役。みんなの質問に「はい／いいえ／わからない」だけで答えます。たんていチームの仲間です。',
+  master: 'お題を知っている 司会役。みんなの質問に「はい／いいえ／わからない／部分的にそう／部分的に違う」で答えます。たんていチームの仲間です。',
   insider: 'お題を こっそり知っている子。知らないふりで みんなを正解へ みちびいて、最後まで バレなければ勝ち！',
   common: 'お題を知らない。質問で お題を当てて、そのあと「知ってたっぽい子」を見つけよう！',
   follower: 'お題は知らないけど、しってるっこが だれか知っている。しってるっこを かばいきれば勝ち！'
@@ -90,7 +90,7 @@ function pcHtml(g, i) {
   var badge = voted ? '✅' : asking ? '❓' : g.off && g.off[i] ? '📴' : '';
   return '<div class="pc' + cls.slice(2) + '" data-p="' + i + '">' + (badge ? '<span class="bd">' + badge + '</span>' : '') + '<div class="hd">' + avHtml(pl) + '<span class="nm">' + esc(pl.name) + (i === g.me ? '（あなた）' : '') + '</span></div><div class="tg">' + tags + (i !== g.master ? '<span class="qn">質問 ' + (g.qn[i] || 0) + '</span>' : '') + '</div></div>';
 }
-var ANS = { y: ['はい', 'y', '⭕'], n: ['いいえ', 'n', '❌'], u: ['わからない', 'u', '🤷'], correct: ['正解！', 'ok', '🎉'] };
+var ANS = { y: ['はい', 'y', '⭕'], n: ['いいえ', 'n', '❌'], u: ['わからない', 'u', '🤷'], py: ['部分的にそう', 'py', '🔶'], pn: ['部分的に違う', 'pn', '🔸'], sp: ['はい、もっと具体的に', 'sp', '➡️'], correct: ['正解！', 'ok', '🎉'] };
 function stampHtml(ans, auto) { var a = ANS[ans]; return a ? '<span class="st ' + a[1] + '">' + a[2] + ' ' + a[0] + (auto ? '<small>（おまかせ）</small>' : '') + '</span>' : '<span class="st wait">…</span>'; }
 function entryHtml(g, e) {
   var pl = e.p != null && e.p >= 0 ? g.players[e.p] : null, mine = e.p === g.me;

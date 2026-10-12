@@ -9,7 +9,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
   const p = await (await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, locale: 'ja-JP' })).newPage();
   const errs = []; p.on('pageerror', e => errs.push(e.message));
-  await p.goto(URL0 + (URL0.includes('?') ? '&' : '?') + 'turbo&testrole=common&testword=' + encodeURIComponent('ドッジボール') + '&v=' + Date.now(), { waitUntil: 'load' });
+  await p.goto(URL0 + (URL0.includes('?') ? '&' : '?') + 'turbo&testrole=common&debug=sk-test&testword=' + encodeURIComponent('ドッジボール') + '&v=' + Date.now(), { waitUntil: 'load' });
   await p.fill('#nameIn', 'てすと'); await p.tap('#soloBtn');
   await p.waitForFunction(() => window.__sk.view && window.__sk.view.phase === 'lobby');
   await p.tap('#startBtn');

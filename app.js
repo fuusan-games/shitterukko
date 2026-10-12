@@ -25,18 +25,12 @@ function submitInput() {
     if (act('askG', t)) { inp.value = ''; ui.ansMode = false; render(lastView); }
   } else if (mode === 'mchat' || mode === 'chat') {
     var mv = mode === 'mchat' && v.g.toAnswer ? masterWord(t) : null;
-    if (mv) { act('answer', { qid: v.g.toAnswer.qid, ans: mv }); inp.value = ''; return; }
+    if (mv) { act('answer', { qid: v.g.toAnswer.qid, ans: mv, note: t.length > 3 ? t.slice(0, 40) : '' }); inp.value = ''; return; }
     if (act('chat', t)) inp.value = '';
   }
 }
 // おだいばんが 声や文字で「はい／いいえ／わからない」と言ったとき
-function masterWord(t) {
-  var s = K.norm(t);
-  if (/^(はい|うん|そう|yes|いえす|そうです|そのとおり|せいかい)/.test(s) && !/ない$/.test(s)) return /せいかい/.test(s) ? 'correct' : 'y';
-  if (/^(いいえ|いや|ちがう|ちがいます|no|のー|ううん)/.test(s)) return 'n';
-  if (/^(わからない|わかりません|わかんない|びみょう|どちらとも)/.test(s)) return 'u';
-  return null;
-}
+function masterWord(t) { return K.parseAnswer(t); }   // 「部分的にそう」「もっと具体的に」なども読む（kb.js）
 $('sendBtn').onclick = submitInput;
 $('msgIn').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); submitInput(); } });
 $('msgIn').addEventListener('input', function () { if (curMode() === 'guess') paintSugg(); });

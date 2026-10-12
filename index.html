@@ -348,7 +348,7 @@ body.solo .net-only{display:none!important}
 .lg-q .ar{margin-top:3px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .lg-q .st{font-size:12.5px;font-weight:900;border-radius:8px;padding:1px 7px;background:#eee}
 .lg-q .st small{font-size:9.5px;font-weight:700;opacity:.7}
-.lg-q .st.y{background:#d3f9d8;color:#1b6b2c}.lg-q .st.n{background:#ffe3e3;color:#a61e1e}.lg-q .st.u{background:#e7ecf0;color:#4a5560}.lg-q .st.ok{background:#ffd43b;color:#5a3d00}.lg-q .st.wait{background:#f3f3f3;color:#999;animation:tpulse 1s infinite}
+.lg-q .st.y{background:#d3f9d8;color:#1b6b2c}.lg-q .st.n{background:#ffe3e3;color:#a61e1e}.lg-q .st.u{background:#e7ecf0;color:#4a5560}.lg-q .st.py{background:#fff3bf;color:#7a5b00}.lg-q .st.pn{background:#ffe8cc;color:#9a4a00}.lg-q .st.sp{background:#d0ebff;color:#1c5d99}.mbtns2 button{font-size:13px!important;padding:8px 4px!important;opacity:.92}.lg-q .st.ok{background:#ffd43b;color:#5a3d00}.lg-q .st.wait{background:#f3f3f3;color:#999;animation:tpulse 1s infinite}
 .lg-q .sy{font-size:11px;font-weight:700;opacity:.7}
 .lg-q.hit .qb{border-color:#f0b400;background:#fffbe6;box-shadow:0 0 0 3px rgba(240,180,0,.25)}
 .lg-votes{border-color:#b9e6dc}
@@ -359,6 +359,7 @@ body.solo .net-only{display:none!important}
 .mbtns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
 .mbtns button{padding:14px 2px;border-radius:14px;font-size:18px;font-weight:900;color:#fff;min-height:56px;box-shadow:0 3px 0 rgba(0,0,0,.2)}
 .mbtns .y{background:#2f9e44}.mbtns button{white-space:nowrap}.mbtns .u{font-size:15px}.mbtns .n{background:#e03131}.mbtns .u{background:#748391}
+.mbtns2{margin-top:6px}.mbtns2 button{min-height:40px}.mbtns .py{background:#e8a200}.mbtns .pn{background:#d9480f}.mbtns .sp{background:#1c7ed6}
 .mbtns button:active{transform:translateY(2px);box-shadow:none}
 #mPanel .ok{display:block;width:100%;margin-top:6px;padding:7px;border-radius:12px;background:#fff;border:2px dashed #f0b400;font-weight:900;font-size:13px}
 .v1Btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
@@ -471,6 +472,7 @@ body.solo .net-only{display:none!important}
       <div class="actLab" id="actLab"></div>
       <div id="mPanel" style="display:none"><div id="mQ"></div><div id="mHint"></div>
         <div class="mbtns"><button class="y" data-ans="y">⭕ はい</button><button class="n" data-ans="n">❌ いいえ</button><button class="u" data-ans="u">🤷 わからない</button></div>
+        <div class="mbtns mbtns2"><button class="py" data-ans="py">🔶 部分的にそう</button><button class="pn" data-ans="pn">🔸 部分的に違う</button><button class="sp" data-ans="sp">➡️ もっと具体的に</button></div>
         <button class="ok" data-ans="correct">🎯 お題と同じ意味！ 正解にする</button></div>
       <div class="v1Btns" id="v1Btns" style="display:none"><button class="yes" data-y="1">🙋 しってるっこ！</button><button class="no" data-y="0">🙅 ちがうと思う</button></div>
       <div class="voteGrid" id="voteGrid" style="display:none"></div>

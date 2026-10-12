@@ -11,8 +11,9 @@ var K = root.SKB, B = {};
 B.rng = K.rng;
 // ---------- パラメータ（tools/train.js が学習。範囲は [名前, 最小, 最大]） ----------
 B.PKEYS = [['tau', 0.01, 1.2], ['gTh', 0.2, 0.97], ['gLate', 0, 0.7], ['sig', 0, 4], ['sigLate', 0, 4], ['iTh', 0.15, 1.2], ['iEm', 0.5, 1.0], ['decoy', 0, 0.4],
-  ['iV1', 0, 1], ['wE', -1, 3], ['wM', -1, 3], ['wG', -1, 3], ['wB', -2, 2], ['wN', -1, 1], ['wV', -1, 2], ['th1', 0.2, 0.85]];
-B.HAND = { tau: 0.35, gTh: 0.6, gLate: 0.3, sig: 1.5, sigLate: 1.5, iTh: 0.5, iEm: 0.85, decoy: 0.05, iV1: 0.5, wE: 1, wM: 0.5, wG: 0.5, wB: 0.3, wN: 0, wV: 0.3, th1: 0.5 };
+  ['iV1', 0, 1], ['wE', -1, 3], ['wM', -1, 3], ['wG', -1, 3], ['wB', -2, 2], ['wN', -1, 1], ['wV', -1, 2], ['th1', 0.2, 0.85],
+  ['iSub', 0, 0.6], ['iRamp', 0, 0.6], ['wH', -1, 2], ['wP', -2, 3]];   // iSub：しってるっこが わざと“ふつうの人っぽい”まあまあの質問をする割合、iRamp：はじめは誘導をひかえる時間、wH/wP：見やぶりの特徴（目立つ質問の数・正解に寄った質問の割合）
+B.HAND = { tau: 0.35, gTh: 0.6, gLate: 0.3, sig: 1.5, sigLate: 1.5, iTh: 0.5, iEm: 0.85, decoy: 0.05, iV1: 0.5, wE: 1, wM: 0.5, wG: 0.5, wB: 0.3, wN: 0, wV: 0.3, th1: 0.5, iSub: 0, iRamp: 0, wH: 0, wP: 0 };
 B.toVec = function (P) { return B.PKEYS.map(function (k) { return P[k[0]]; }); };
 B.fromVec = function (v) { var P = {}; B.PKEYS.forEach(function (k, i) { P[k[0]] = Math.min(k[2], Math.max(k[1], v[i])); }); return P; };
 // 強さ：学習済み方針に どれだけ寄せるか(mix)、判断のブレ(noise)、質問のまちがい率(slop)、間合い(gap 秒)
@@ -41,6 +42,10 @@ B.pub = function (db, pool, o) {
 };
 function lik(S, truth, ans) {   // P(答え | 本当の属性値)
   var e = S.eps, d = S.du;
+  // あいまいな答え（人間のおだいばん）：やわらかい手がかり
+  if (ans === 'py') return truth === 1 ? 0.6 : truth === 2 ? 0.45 : 0.12;
+  if (ans === 'pn') return truth === 1 ? 0.25 : truth === 2 ? 0.45 : 0.35;
+  if (ans === 'sp') ans = 'y';
   if (truth === 2) return ans === 'u' ? 1 - 2 * S.ua : S.ua;
   if (ans === 'u') return d;
   return (ans === 'y') === (truth === 1) ? 1 - e - d : e;
@@ -58,14 +63,18 @@ B.probs = function (S) {
 // 答えを反映。rec = {a, neg, ans} or {w, ans}
 B.apply = function (S, rec) {
   S.cache = null; S.n++;
-  if (rec.w != null) { if (rec.w >= 0 && rec.ans !== 'correct') S.dead[rec.w] = 1; return; }
+  if (rec.w != null) {
+    if (rec.w >= 0 && rec.ans !== 'correct') S.dead[rec.w] = 1;
+    if (rec.w >= 0 && rec.ans === 'near') { var nv = nearVec(S.db, rec.w); for (var k = 0; k < S.N; k++) S.lw[k] += nv[k]; }   // 「いいえ、でも近い」→ 似たお題を 押し上げる
+    return;
+  }
   if (rec.f != null) {   // 「関係することば」の質問：お題ごとに はい(1)/いいえ(0)/わからない(2)
     if (rec.ans === 'u') return;
     var tv = factVec(S.db, rec);
     for (var j = 0; j < S.N; j++) S.lw[j] += Math.log(lik(S, tv[j], rec.ans));
     return;
   }
-  var ans = rec.ans; if (rec.neg && ans !== 'u') ans = ans === 'y' ? 'n' : 'y';
+  var ans = rec.ans; if (rec.neg && ans !== 'u') ans = { y: 'n', n: 'y', py: 'pn', pn: 'py', sp: 'n' }[ans] || ans;
   var a = rec.a, words = S.db.words;
   for (var i = 0; i < S.N; i++) S.lw[i] += Math.log(lik(S, words[i].v[a], ans));
   S.asked[a] = (S.asked[a] || 0) + 1;
@@ -74,12 +83,29 @@ B.apply = function (S, rec) {
 };
 function factVec(db, rec) {
   if (rec._tv && rec._tv.length === db.N) return rec._tv;
-  var tv = new Uint8Array(db.N), p = { text: rec.f };
-  for (var i = 0; i < db.N; i++) tv[i] = K.factTruth(db, i, p);
+  // おだいばんと同じ答え方（季節・大きさくらべ・なかま など）で、各お題なら どう答えるかを出す
+  var tv = new Uint8Array(db.N), p = rec.pq || { t: 'fact', text: rec.f };
+  for (var i = 0; i < db.N; i++) { var a = K.answerParsed(db, p, i); tv[i] = a === 'y' || a === 'correct' ? 1 : a === 'n' ? 0 : 2; }
   try { Object.defineProperty(rec, '_tv', { value: tv, enumerable: false, configurable: true, writable: true }); } catch (e) {}
   return tv;
 }
 B.factVec = factVec;
+// お題 w に「近い」お題ほど大きい値（同じカテゴリ・特ちょうの一致・関係ることばのつながり）
+var NEARC = {};
+function nearVec(db, w) {
+  if (NEARC[w] && NEARC[w].length === db.N) return NEARC[w];
+  var out = new Float64Array(db.N), a = db.words[w];
+  for (var j = 0; j < db.N; j++) {
+    var b = db.words[j], same = 0, tot = 0;
+    for (var i = 0; i < K.NA; i++) { if (a.v[i] === 2 || b.v[i] === 2) continue; if (a.v[i] === 1 || b.v[i] === 1) { tot++; if (a.v[i] === b.v[i]) same++; } }
+    var sim = tot ? same / tot : 0, link = 0;
+    if (b.n.some(function (x) { return x.length >= 2 && K.factHits(db, w, x).length; }) || a.n.some(function (x) { return x.length >= 2 && K.factHits(db, j, x).length; })) link = 1;
+    out[j] = 2.5 * sim + (a.cat === b.cat ? 0.8 : 0) + 1.6 * link;
+  }
+  var m = 0; for (j = 0; j < db.N; j++) m += out[j]; m /= db.N; for (j = 0; j < db.N; j++) out[j] -= m;
+  NEARC[w] = out; return out;
+}
+B.nearVec = nearVec;
 B.clone = function (S) { return { db: S.db, N: S.N, lw: new Float64Array(S.lw), dead: new Uint8Array(S.dead), eps: S.eps, du: S.du, ua: S.ua, asked: Object.assign({}, S.asked), n: S.n, cache: null }; };
 function H(arr, s) { var h = 0; for (var i = 0; i < arr.length; i++) { var q = arr[i] / s; if (q > 1e-12) h -= q * Math.log(q); } return h; }
 // 属性 a を聞いたときの 期待情報量（nats）と、答えごとの確率
@@ -138,7 +164,13 @@ B.chooseInsider = function (S, P, w, ctx) {
   // ときどき「それは○○？」とハズレを言って まぎれる（上位候補から）
   if (P.decoy > 0 && r() < P.decoy * 0.5 && pr.top !== w && pr.pt > 0.15 && pr.pt < 0.6) return { w: pr.top, why: 'decoy', p: pr.pt };
   var C = attrCands(S, pr); if (!C.list.length) return { w: w, why: 'guess', p: pw };
+  // ふつうの人っぽさ：ときどき「まあまあ役に立つ」質問をそのまま聞く（誘導しない）
+  if (P.iSub > 0 && r() < P.iSub) {
+    var mid = C.list.filter(function (x) { return x.ig >= 0.3 * C.best && x.ig <= 0.8 * C.best; });
+    if (mid.length) { var mq = mid[Math.floor(r() * mid.length)]; return { a: mq.a, ig: mq.ig, why: 'plain' }; }
+  }
   var sig = P.sig + (frac > 0.5 ? P.sigLate * (frac - 0.5) * 2 : 0);
+  if (P.iRamp > 0 && frac < P.iRamp) sig *= frac / P.iRamp;   // はじめのうちは 誘導をひかえる
   var words = S.db.words, items = C.list.map(function (x) {
     var t = words[w].v[x.a], ans = t === 1 ? 'y' : t === 0 ? 'n' : 'u';
     var g = B.gainFor(S, { a: x.a, ans: ans }, w);
@@ -153,13 +185,13 @@ B.chooseInsider = function (S, P, w, ctx) {
 B.analyze = function (db, pool, qa, wStar, o) {
   var S = B.pub(db, pool, o), per = {}, steps = [];
   qa.forEach(function (q) {
-    var f = per[q.p] || (per[q.p] = { n: 0, ex: 0, mx: -9, best: null, guessLP: null, wrong: 0 });
+    var f = per[q.p] || (per[q.p] = { n: 0, ex: 0, mx: -9, best: null, guessLP: null, wrong: 0, hi: 0, pos: 0 });
     var pr = B.probs(S), before = pr.p[wStar];
     if (q.w != null && q.ans === 'correct') { f.guessLP = Math.log(Math.max(before, 1e-9)); steps.push({ p: q.p, guess: true, pb: before }); B.apply(S, q); return; }
     var ig = q.f != null ? B.ig(S, -1, pr, factVec(db, q)).ig : q.a != null ? B.ig(S, q.a, pr).ig : (function () { var pw = q.w >= 0 ? pr.p[q.w] : 0; return pw > 0 && pw < 1 ? -(pw * Math.log(pw) + (1 - pw) * Math.log(1 - pw)) : 0; })();
     var T = B.clone(S); B.apply(T, q); var after = B.probs(T).p[wStar];
     var gain = Math.log(Math.max(after, 1e-12) / Math.max(before, 1e-12)), ex = gain - ig;
-    f.n++; f.ex += ex; if (ex > f.mx) { f.mx = ex; f.best = q; }
+    f.n++; f.ex += ex; if (ex > f.mx) { f.mx = ex; f.best = q; } if (ex > 0.4) f.hi++; if (ex > 0.05) f.pos++;
     if (q.w != null) f.wrong++;
     steps.push({ p: q.p, ex: ex, gain: gain, ig: ig, pb: before, pa: after });
     B.apply(S, q);
@@ -170,6 +202,8 @@ B.analyze = function (db, pool, qa, wStar, o) {
 B.score = function (P, f, isGuesser, v1yes) {
   if (!f) f = { n: 0, ex: 0, mx: 0 };
   var s = P.wE * f.ex / Math.sqrt(f.n + 1) + P.wM * Math.max(0, f.mx) + P.wN * Math.min(f.n, 10) / 5;
+  if (P.wH) s += P.wH * Math.min(f.hi || 0, 4) / 2;
+  if (P.wP && f.n) s += P.wP * ((f.pos || 0) / f.n - 0.4) * Math.min(1, f.n / 3);
   if (isGuesser) s += P.wB + P.wG * (f.guessLP != null ? Math.min(6, -f.guessLP) : 0);
   if (v1yes) s += P.wV;
   return s;

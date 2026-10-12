@@ -22,7 +22,7 @@ function play(seats, o, r) {
       if (s.kind !== 'human') return; const hb = s.hb;
       if (G.phase === 'night' && G.nstep === 'master' && i === G.master) L.masterOk(G, i, now);
       if (G.phase === 'qa') {
-        if (i === G.master) { const e = G.pending.find(x => x.human); if (e && now - e.at > 150) { let a = K.answerParsed(DB, e.parsed, G.secret); if (a !== 'correct' && r() < hb.err) a = a === 'y' ? 'n' : a === 'n' ? 'y' : 'u'; if (e.parsed.t === 'guess') a = a === 'correct' ? 'correct' : 'n'; L.answer(G, i, e.qid, a === 'correct' && e.parsed.t !== 'guess' ? 'y' : a, now); } return; }
+        if (i === G.master) { const e = G.pending.find(x => x.human); if (e && now - e.at > 150) { const h = hb.hedge ? hedgeAnswer(G, e, r, hb) : null; if (h) { L.answer(G, i, e.qid, h.a, now, h.note); return; } let a = K.answerParsed(DB, e.parsed, G.secret); if (a !== 'correct' && r() < hb.err) a = a === 'y' ? 'n' : a === 'n' ? 'y' : 'u'; if (e.parsed.t === 'guess') a = a === 'correct' ? 'correct' : 'n'; L.answer(G, i, e.qid, a === 'correct' && e.parsed.t !== 'guess' ? 'y' : a, now); } return; }
         if (!hNext[i]) hNext[i] = now + 300 * hb.gap * r();
         if (now >= hNext[i] && !G.pending.some(e => e.p === i)) {
           hNext[i] = now + 330 * hb.gap * (0.6 + r() * 0.8);
@@ -37,5 +37,25 @@ function play(seats, o, r) {
   }
   return G;
 }
+// 人間っぽい おだいばん（本物の対局から）：あいまいに答える・固有名詞のお題だと「ゲーム？」に いいえ・近い答えに「近い」・ときどき ひとこと
+function hedgeAnswer(G, e, r, hb) {
+  const sec = DB.words[G.secret], p = e.parsed;
+  let a = K.answerParsed(DB, p, G.secret);
+  if (p.t === 'guess') {
+    if (a === 'correct') return { a: 'correct' };
+    if (p.w >= 0 && DB.words[p.w].cat === sec.cat && r() < 0.5) return { a: 'pn', note: r() < 0.5 ? '近い' : '' };   // 同じなかま →「いいえ、だいぶ近い」
+    return { a: a === 'sp' ? 'sp' : 'n' };
+  }
+  if (a === 'correct') a = 'y';
+  const kind = p.t === 'attr' && K.ATTRS[p.a].g === 'kind';
+  if (kind && sec.v[K.AI.proper] === 1 && a === 'y' && r() < 0.4) a = 'n';   // 「ゲーム？」→ ひとつの作品なので いいえ
+  const u = r();
+  if (a === 'u') a = u < 0.45 ? 'u' : u < 0.75 ? 'py' : 'pn';
+  else if (a === 'y') a = u < hb.err ? 'n' : u < 0.12 ? 'py' : u < 0.16 && kind ? 'sp' : 'y';
+  else if (a === 'n') a = u < hb.err ? 'y' : u < 0.1 ? 'pn' : u < 0.13 ? 'u' : 'n';
+  let note = '';
+  if ((a === 'py' || a === 'pn' || a === 'sp') && r() < hb.note) { const fs = sec.facts || []; if (fs.length) note = fs[Math.floor(r() * fs.length)][0] + 'は近い'; }
+  return { a, note };
+}
 function wonBy(G, i) { return G.result && G.result.winners.indexOf(i) >= 0; }
-module.exports = { C, K, B, L, DB, CH, split, humanBot, play, wonBy };
+module.exports = { C, K, B, L, DB, CH, split, humanBot, play, wonBy, hedgeAnswer };

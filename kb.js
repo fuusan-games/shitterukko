@@ -31,7 +31,7 @@ var A = [
   ['bird', 'kind', '鳥のなかま？', 'n', ['!焼き鳥', '!やきとり', '!鳥居', '!とりい', '!鶏肉', '鳥', 'とりの', 'とりです', 'とり？', 'とりか']],
   ['fish', 'kind', '魚のなかま？', 'n', ['!金魚', '魚', 'さかな']],
   ['bug', 'kind', '虫？', 'n', ['!てんとう', '昆虫', 'こんちゅう', '虫', 'むし']],
-  ['pla', 'kind', '植物？', 'n', ['植物', 'しょくぶつ', '草花', '草', '木の仲間', '花です', '花？', 'はなです', '花か', '花の']],
+  ['pla', 'kind', '植物？', 'n', ['植物', 'しょくぶつ', '草花', '草', '木の仲間', '花です', '花？', 'はなです', '花か', '花の', '植物由来', 'しょくぶつゆらい', '植物から', 'しょくぶつから']],
   ['person', 'kind', '人？', 'n', ['!人の形', '!人形', '!人が', '人間', 'にんげん', '人物', '人です', '人？', '人か', 'ひとです', 'ひと？', '人のこと']],
   ['job', 'kind', '仕事・職業？', 'n', ['職業', 'しょくぎょう', '仕事', 'しごと', '働いて', 'はたらいて', '働く人', 'はたらくひと']],
   ['food', 'kind', '食べ物？', 'n', ['食べ物', 'たべもの', '食品', '食材', 'しょくざい', 'ごはんの', 'おかず']],
@@ -92,19 +92,19 @@ var A = [
   // --- とくちょう ---
   ['move', 'feat', '動く？', 'n', ['動く', 'うごく', '動き', 'うごき', '動け', 'うごけ', '動いて', 'うごいて', '動か', 'うごか']],
   ['legs', 'feat', '足がある？', 'n', ['足がある', '足がな', 'あしがある', 'あしがな', 'あしは', '足は', '足あ', '脚', '足']],
-  ['fur', 'feat', '毛が生えてる？', 'n', ['!毛布', '!毛糸', '毛', 'ふさふさ', 'もふもふ']],
+  ['fur', 'feat', '毛が生えてる？', 'n', ['!毛布', '!毛糸', '毛', 'ふさふさ', 'もふもふ', 'もこもこ', 'ふわふわのけ']],
   ['fly', 'feat', '空を飛ぶ？', 'n', ['!飛行機', '!羽根', '空を飛', 'そらをと', '空飛', '飛ぶ', '飛べ', '飛ん', '飛び', 'とぶ', 'とべ', 'とんで']],
   ['swim', 'feat', '水の中を泳ぐ？', 'n', ['泳', 'およ', '水中', 'すいちゅう', '水の中', 'みずのなか', '潜', 'もぐ']],
   ['light', 'feat', '光る？', 'n', ['光', 'ひかる', 'ひかり', '明る', 'あかる', 'らいと', '照ら', '輝', 'かがや']],
-  ['sound', 'feat', '音が出る？', 'n', ['!音楽', '音', 'おと', '鳴', 'なきごえ', 'うるさ', '声', 'こえ', 'しゃべ']],
+  ['sound', 'feat', '音が出る？', 'n', ['!音楽', '!おとな', '!おとこ', '!おとう', '!おとし', '!おとめ', '!おとも', '!おとず', '!おととい', 'ってなく', 'ってな', 'ほえる', '吠', '音', 'おと', '鳴', 'なきごえ', 'うるさ', '声', 'こえ', 'しゃべ']],
   ['hot', 'feat', '熱い・あたたかい？', 'n', ['熱い', 'あつい', '暑い', '温か', '暖か', 'あたたか', 'あったか', 'ほかほか', 'ほっと']],
   ['cold', 'feat', '冷たい？', 'n', ['冷た', 'つめた', '冷え', 'ひえ', '寒い', 'さむい', '凍', 'こお', 'ひんやり']],
   ['sweet', 'feat', '甘い？', 'n', ['甘', 'あまい', 'あまく', 'すいーと']],
   ['spicy', 'feat', '辛い？', 'n', ['辛', 'からい', 'からく', 'ぴりぴり', 'すぱいしー']],
   ['sour', 'feat', 'すっぱい？', 'n', ['すっぱ', '酸っぱ', '酸味']],
   ['water', 'feat', '水に関係ある？', 'n', ['!水着', '!みずぎ', '!水筒', '!水族館', '!水色', '!水玉', '水', 'みず', '濡れ', 'ぬれ', '液体', 'えきたい']],
-  ['fire', 'feat', '火に関係ある？', 'n', ['!火曜', '!火山', '!花火', '!火事', '火', 'ほのお', '炎', '燃', 'もえる']],
-  ['wood', 'feat', '木でできてる？', 'n', ['木製', 'もくせい', '木で', '木の', '木から', '木材']],
+  ['fire', 'feat', '火に関係ある？', 'n', ['!火曜', '!火山', '!花火', '!火事', '火', 'ほのお', '炎', '燃', 'もえる', 'ひをつか', 'ひがで', 'ひをつけ', 'ひにかけ', 'ひがつ', 'ひをけ', 'ひであぶ']],
+  ['wood', 'feat', '木でできてる？', 'n', ['木製', 'もくせい', '木で', '木の', '木から', '木材', 'きでできて', 'きでつく', 'きでできた']],
   ['metal', 'feat', '金属でできてる？', 'n', ['金属', 'きんぞく', '鉄', 'てつで', 'めたる', 'すてんれす', 'あるみ']],
   ['paper', 'feat', '紙でできてる？', 'n', ['紙', 'ぺーぱー']],
   ['cloth', 'feat', '布でできてる？', 'n', ['布', 'ぬの', '繊維', '毛糸', 'けいと']],
@@ -127,7 +127,7 @@ var A = [
   ['team', 'feat', 'チームでやる？', 'n', ['ちーむ', '団体', 'だんたい', '何人かで', 'みんなで', '大勢で', 'おおぜいで']],
   ['racket', 'feat', 'ラケットを使う？', 'n', ['らけっと']],
   ['kick', 'feat', '足でける？', 'n', ['蹴', 'をける', 'をけっ', 'をけり', 'ぼーるける', 'ぼーるけっ', 'ぼーるをけ', '足でける', 'あしでける', '足を使', 'あしをつか', '足で', 'きっく']],
-  ['hand', 'feat', '手を使う？', 'n', ['手を使', 'てをつか', '手で使', '手でにぎ', '手で', '握', 'にぎる']],
+  ['hand', 'feat', '手を使う？', 'n', ['手を使', 'てをつか', '手で使', '手でにぎ', '手で', '握', 'にぎる', 'てでもつ', 'てでさわ', 'てでつか']],
   ['throw', 'feat', '投げる？', 'n', ['投げ', 'なげる', 'なげて', 'なげま']],
   ['net', 'feat', 'ネットや網を使う？', 'n', ['ねっと', '網', 'あみ']],
   ['fight', 'feat', '相手と戦う・対戦する？', 'n', ['戦', 'たたか', '対戦', 'たいせん', 'ばとる', '勝負', 'しょうぶ', 'けんか']],
@@ -138,7 +138,7 @@ var A = [
   ['number', 'feat', '数字が書いてある？', 'n', ['数字', 'すうじ', 'ばんごう', '番号']],
   ['read', 'feat', '読むもの？', 'n', ['!読み手', '読み物', 'よみもの', '読む', '読め', '読ん', 'よむ', 'よめ', 'よんで']],
   ['rice', 'feat', 'お米からできてる？', 'n', ['お米', 'おこめ', '米', 'こめ', 'ごはんで']],
-  ['noodle', 'feat', 'めん類？', 'n', ['!画面', '!がめん', '!綿', '!めんどう', '!免許', '!めんきょ', '麺', 'めん', 'ぬーどる', 'すする', 'ずるずる']],
+  ['noodle', 'feat', 'めん類？', 'n', ['!画面', '!がめん', '!綿', '!めんどう', '!免許', '!めんきょ', '!めんをかぶ', '!お面', '!おめん', '!めんどうな', '麺', 'めん', 'ぬーどる', 'すする', 'ずるずる']],
   ['bread', 'feat', 'パンや小麦粉を使う？', 'n', ['小麦粉', 'こむぎこ', '小麦', 'こむぎ', 'ぱんを', 'ぱんで', 'ぱんに']],
   ['spoon', 'feat', 'スプーンで食べる？', 'n', ['すぷーんで', 'すぷーんを']],
   ['chop', 'feat', 'おはしで食べる？', 'n', ['お箸で', '箸で', 'はしで', 'おはしで']],
@@ -164,7 +164,26 @@ var A = [
   ['summer', 'season', '夏に関係ある？', 'n', ['夏', 'なつ']],
   ['autumn', 'season', '秋に関係ある？', 'n', ['秋', 'あきに', 'あきの', 'あきが', 'あきです']],
   ['winter', 'season', '冬に関係ある？', 'n', ['冬', 'ふゆ']],
-  ['night', 'season', '夜に関係ある？', 'n', ['夜', 'よる', '夜中', '夜行']]
+  ['night', 'season', '夜に関係ある？', 'n', ['夜', 'よる', '夜中', '夜行']],
+  // 活動・概念（人は「スポーツ」や「遊び」を“形のないもの”として考える。さわれる・見えるは あいまい）
+  ['combat', 'feat', '格闘技？', 'n', ['格闘技', 'かくとうぎ', '格闘', 'かくとう', '武道', '武術', 'ぶじゅつ', 'まーしゃるあーつ']],
+  ['strike', 'feat', '打撃系？', 'n', ['打撃', 'だげき', '殴', 'なぐ', 'ぱんち', 'パンチ']],
+  ['grapple', 'feat', '相手と組み合う？', 'n', ['組み合', 'くみあ', '組み技', 'くみわざ', '組む', 'くむ？', 'つかみあ', '投げ技', 'なげわざ', '寝技', 'ねわざ']],
+  ['body', 'feat', '体を動かす？', 'n', ['!運動会', '!うんどうかい', '!運動場', '!うんどうじょう', '体を動か', 'からだをうごか', '体を使', 'からだをつか', '運動', 'うんどう', '汗をかく', 'あせをかく']],
+  ['winlose', 'feat', '勝ち負けがある？', 'n', ['勝ち負け', 'かちまけ', '勝敗', 'しょうはい', '試合', 'しあい', '競う', 'きそう', '競争', 'きょうそう', '勝ち', 'かち？', '負け', 'まけ？']],
+  ['hobby', 'feat', '趣味？', 'u', ['趣味', 'しゅみ', 'ほびー', '娯楽', 'ごらく']],
+  ['touch', 'feat', 'さわれる？', 'u', ['さわれ', '触れ', 'さわる', '触る', 'さわって', '触って', 'さわった', '手でふれ']],
+  ['visible', 'feat', '目に見える？', 'u', ['目に見え', 'めにみえ', '目で見え', 'めでみえ', '見えるもの', 'みえるもの', '目で見る', 'めでみる']],
+  ['abstract', 'feat', '形のないもの？', 'n', ['形がない', 'かたちがない', '形のない', 'かたちのない', '概念', 'がいねん', '抽象', 'ちゅうしょう', 'ことがら']],
+  ['time', 'feat', '時間に関係ある？', 'n', ['!時間帯', '!じかんたい', '時間', 'じかん', '時の流れ', 'ときのながれ', '時刻', 'じこく', '過去', 'かこ', '未来', 'みらい']],
+  ['science', 'feat', '科学に関係ある？', 'n', ['科学', 'かがく', '理科', 'りか', '物理', 'ぶつり', '実験', 'じっけん']],
+  ['natural', 'feat', '自然にあるもの？', 'n', ['自然にある', 'しぜんにある', '自然のもの', 'しぜんのもの', '自然にでき', 'しぜんにでき', '天然', 'てんねん', '自然由来', 'しぜんゆらい']],
+  ['proper', 'feat', '固有の名前？', 'n', ['固有', 'こゆう', '作品の名前', 'さくひんのなまえ', '商品の名前', '商品名', 'しょうひんめい', 'タイトル', 'たいとる', 'ブランド', 'ぶらんど', 'ひとつのゲームの名前', '作品', 'さくひん', '名前がついた']],
+  ['videogame', 'feat', 'ビデオゲーム？', 'n', ['てれびげーむ', 'ビデオゲーム', 'びでおげーむ', 'ゲーム機で', 'げーむきで', 'ゲームで遊', 'げーむであそ', 'ゲームをする', 'げーむをする', 'ゲームする', 'げーむする', 'ゲームの名前', 'げーむのなまえ', 'スマホゲーム', 'すまほげーむ', 'オンラインゲーム', 'おんらいんげーむ']],
+  ['app', 'feat', 'アプリやネットのサービス？', 'n', ['アプリ', 'あぷり', 'サービス', 'さーびす', 'サイト', 'さいと', 'えすえぬえす', 'SNS']],
+  ['chara', 'feat', 'キャラクター？', 'n', ['キャラクター', 'きゃらくたー', 'キャラ', 'きゃら']],
+  ['online', 'feat', 'インターネットやオンラインに関係ある？', 'n', ['オンライン', 'おんらいん', 'インターネット', 'いんたーねっと', 'ネットで', 'ねっとで', 'ネットに', 'ねっとに', '配信', 'はいしん', '動画', 'どうが', 'ゆーちゅーぶ']],
+  ['screen', 'feat', '画面で見る？', 'n', ['画面', 'がめん', 'もにたー', 'ディスプレイ', 'でぃすぷれい']]
 ];
 K.ATTRS = A.map(function (a, i) { return { i: i, id: a[0], g: a[1], q: a[2], def: a[3], pats: a[4] }; });
 K.AI = {}; K.ATTRS.forEach(function (a) { K.AI[a.id] = a.i; });
@@ -191,6 +210,8 @@ K.build = function (data, facts) {
       if (size === 0) { set('s1', 2); set('s2', 2); set('s3', 2); }
       else { set('s1', size >= 2 ? 1 : 0); set('s2', size >= 3 ? 1 : 0); set('s3', size >= 4 ? 1 : 0); set('carry', size === 1 ? 1 : size === 2 ? 2 : 0); if (size >= 3) set('heavy', 1); if (size === 1) set('heavy', 0); }
       var kind = C.kind || ''; var dv = CAT_DERIVE[kind]; if (dv) Object.keys(dv).forEach(function (k) { set(k, dv[k]); });
+      var explicit = {};
+      tags.forEach(function (t) { explicit[t.replace(/^[-?]/, '').replace(/\?$/, '')] = 1; });
       tags.forEach(function (t) { var val = 1; if (/\?$/.test(t)) { t = '?' + t.replace(/^[-?]/, '').slice(0, -1); } if (t[0] === '-') { val = 0; t = t.slice(1); } else if (t[0] === '?') { val = 2; t = t.slice(1); } set(t, val); });
       // 色：ひとつでも色タグがあれば ほかの色は「いいえ」、なければ全部「わからない」
       var hasCol = K.ATTRS.some(function (a) { return a.def === 'c' && v[a.i] === 1; });
@@ -209,13 +230,33 @@ K.build = function (data, facts) {
       if (v[K.AI.japan] === 1 && v[K.AI.foreign] === 2) v[K.AI.foreign] = 0;
       if (v[K.AI.foreign] === 1 && v[K.AI.japan] === 2) v[K.AI.japan] = 0;
       if ((v[K.AI.veh] === 1 || v[K.AI.elec] === 1) && v[K.AI.soft] === 2) v[K.AI.soft] = 0;
+      // 活動・概念の特ちょう（カテゴリから）
+      var akind = ck === 'spo' || ck === 'evt' || ck === 'hob';
+      if (!explicit.abstract && akind) v[K.AI.abstract] = 1; else if (!explicit.abstract && ck === 'nat') v[K.AI.abstract] = 2;
+      if (v[K.AI.touch] === 2 && !akind && kind !== 'abs' && kind !== 'place' && kind !== 'drink') v[K.AI.touch] = 1;
+      if (v[K.AI.visible] === 2 && !akind && kind !== 'abs') v[K.AI.visible] = 1;
+      if (v[K.AI.body] === 0 && ck === 'spo' && !explicit.body) v[K.AI.body] = 1;
+      if (v[K.AI.body] === 0 && (kind === 'ani' || kind === 'person') && !explicit.body) v[K.AI.body] = 2;
+      if (v[K.AI.winlose] === 0 && !explicit.winlose && v[K.AI.fight] === 1) v[K.AI.winlose] = 1;
+      if (v[K.AI.winlose] === 0 && !explicit.winlose && ck === 'spo') v[K.AI.winlose] = 2;
+      if (v[K.AI.hobby] === 2 && !explicit.hobby && (ck === 'spo' || ck === 'hob')) v[K.AI.hobby] = 1;
+      if (v[K.AI.hobby] === 2 && !explicit.hobby && /^(ani|food|drink|place|person)$/.test(kind)) v[K.AI.hobby] = 0;
+      if (v[K.AI.combat] === 1 && v[K.AI.fight] === 0) v[K.AI.fight] = 1;
       // 道具を使う：ボール・ラケット・ネットを使うものは はい
       if (v[K.AI.equip] === 2 && (v[K.AI.ball] === 1 || v[K.AI.racket] === 1 || v[K.AI.net] === 1)) v[K.AI.equip] = 1;
       // 一人でできる：チームでやるものは いいえ
       if (v[K.AI.solo] === 2 && v[K.AI.team] === 1) v[K.AI.solo] = 0;
       // お金がかかる：お店で買えるものは はい
       if (v[K.AI.cost] === 2 && v[K.AI.store] === 1) v[K.AI.cost] = 1;
-      var w = { id: db.words.length, w: names[0], al: names, n: names.map(K.normL), cat: ck, catName: C.name, size: size, diff: diff, v: v };
+      // 人によって答えが割れるもの：果物・野菜は「生き物？」「人が作った？」に 部分的にそう（育てた作物）
+      var part = {};
+      if ((ck === 'fru' || ck === 'veg') && !explicit.liv) { v[K.AI.liv] = 2; part[K.AI.liv] = 'py'; }
+      if ((ck === 'fru' || ck === 'veg') && !explicit.made) { v[K.AI.made] = 2; part[K.AI.made] = 'py'; }
+      if ((ck === 'fru' || ck === 'veg') && v[K.AI.pla] === 2) v[K.AI.pla] = 1;   // 植物由来
+      if (ck === 'pla' && names[0] === 'いね' && !explicit.made) { v[K.AI.made] = 2; part[K.AI.made] = 'py'; }
+      // 自然にあるもの ＝ 人が作ったものの反対
+      if (!explicit.natural) { var mv = v[K.AI.made]; v[K.AI.natural] = part[K.AI.made] ? 2 : mv === 1 ? 0 : mv === 0 ? 1 : 2; if (part[K.AI.made]) part[K.AI.natural] = 'py'; }
+      var w = { part: part, id: db.words.length, w: names[0], al: names, n: names.map(K.normL), cat: ck, catName: C.name, size: size, diff: diff, v: v };
       var clash = w.n.filter(function (x) { return db.byNorm[x] != null; });
       if (clash.length) { db.dropped.push({ w: names[0], why: 'name clash ' + clash.join(',') + ' with ' + db.words[db.byNorm[clash[0]]].w }); return; }
       w.n.forEach(function (x) { db.byNorm[x] = w.id; });
@@ -223,7 +264,7 @@ K.build = function (data, facts) {
     });
   });
   db.N = db.words.length;
-  K.addFacts(db, facts || root.SK_FACTS);
+  K.addFacts(db, facts || root.SK_FACTS); K.addNouns(db);
   return db;
 };
 // ---------- お題ごとの「関係することば」 ----------
@@ -242,6 +283,7 @@ K.addFacts = function (db, facts) {
       m[2].trim().split(/\s+/).forEach(function (tok) {
         var neg = tok[0] === '!'; if (neg) tok = tok.slice(1);   // '!ことば' = その答えは「いいえ」
         var alts = tok.split('/').map(factNorm).filter(function (a) { return a.length >= 2 || /[\u4e00-\u9fff0-9]/.test(a); });
+        alts.slice().forEach(function (a) { var b = a.replace(/を/g, ''); if (b !== a && b.length >= 3 && alts.indexOf(b) < 0) alts.push(b); });   // 「皮をむ」→「皮む」（話しことばは を を落とす）
         if (alts.length) { alts.neg = neg; w.facts.push(alts); }
       });
     });
@@ -249,13 +291,46 @@ K.addFacts = function (db, facts) {
   db.words.forEach(function (w) { if (!w.facts.length) db.factMiss.push(w.w); });
 };
 // 質問文 t（normL済み）に お題 wid の「関係することば」が出てくるか → [{pos, end}]
+// 書き方のゆれをそろえた形（ー・小さい字・を→お など）と、元の位置への対応
+function fzMap(t) {
+  var s = '', map = [];
+  for (var i = 0; i < t.length; i++) { var c = t[i]; if (c === 'ー' || c === '〜' || c === '~') continue; var f = K.fz(c); if (!f) continue; s += f; map.push(i); }
+  map.push(t.length); return { s: s, map: map };
+}
+var FZC = {};
+function fzc(x) { return FZC[x] || (FZC[x] = K.fz(x).replace(/[ー〜~]/g, '')); }
 K.factHits = function (db, wid, t) {
-  var out = [], fs = db.words[wid].facts || [];
-  for (var i = 0; i < fs.length; i++) for (var j = 0; j < fs[i].length; j++) { var k = t.indexOf(fs[i][j]); if (k >= 0) { out.push({ pos: k, end: k + fs[i][j].length, s: fs[i][j], neg: !!fs[i].neg }); break; } }
+  var out = [], fs = db.words[wid].facts || [], F = null;
+  for (var i = 0; i < fs.length; i++) {
+    var hit = false;
+    for (var j = 0; j < fs[i].length; j++) { var k = t.indexOf(fs[i][j]); if (k >= 0) { out.push({ pos: k, end: k + fs[i][j].length, s: fs[i][j], neg: !!fs[i].neg }); hit = true; break; } }
+    if (hit) continue;
+    if (!F) F = fzMap(t);
+    for (j = 0; j < fs[i].length; j++) { var g = fzc(fs[i][j]); if (g.length < 2) continue; k = F.s.indexOf(g); if (k >= 0) { out.push({ pos: F.map[k], end: F.map[k + g.length - 1] + 1, s: fs[i][j], neg: !!fs[i].neg }); break; } }
+  }
   return out;
 };
 K.ans = function (db, wid, ai) { return db.words[wid].v[ai]; };   // 1/0/2
-K.ANS_TXT = { y: 'はい', n: 'いいえ', u: 'わからない' };
+K.ANS_TXT = { y: 'はい', n: 'いいえ', u: 'わからない', py: '部分的にそう', pn: '部分的に違う', sp: 'はい、でも もっと具体的に' };
+K.ANSWERS = ['y', 'n', 'u', 'py', 'pn', 'sp', 'correct'];
+// おだいばんが 文字や声で答えたとき（人はよく あいまいに答える：「部分的にそう」「はいとは言いづらい」「もっと具体的に」）
+//  y/n/u/correct に加えて py＝だいたいはい（一部・場合による）、pn＝ちょっとちがう（言いづらい・全部ではない）、sp＝はい、でも もっと具体的に（上位の なかま）
+K.parseAnswer = function (t) {
+  var s = K.normL(String(t || '')).replace(/[、。,.!！…・〜~ー\s]/g, '');
+  if (!s) return null;
+  s = s.replace(/^(家|いえ|イエ)(です|だよ|でーす)?/, 'いいえ$2');   // 音声入力で「いいえです」が「家です」になる
+  if (/^(せいかい|正解|あたり|当たり|大正解|だいせいかい)/.test(s)) return 'correct';
+  if (/(具体的|ぐたいてき|もっとくわしく|もっと詳しく|もうすこしくわしく)/.test(s) && !/(ちがう|違う|いいえ)?(もっと)?(しんぷる|シンプル)/.test(s)) return /^(いいえ|ちがう|違う|ちがいます)/.test(s) && !/(すぽーつ|なかま|仲間|ちかい|近い)/.test(s) ? 'sp' : 'sp';
+  if (/(概念|がいねん)/.test(s) && !/^(はい|いいえ)/.test(s)) return 'u';   // 「その概念ではない」＝質問がかみあわない
+  if (/(部分的|ぶぶんてき|一部|いちぶ)(に|は)?(違|ちが)/.test(s)) return 'pn';
+  var neg0 = /^(いいえ|いや|ちがう|違う|ちがいます|違います|no|のー|ううん|ぜんぜん|全然)/.test(s);
+  if (/(言いづら|いいづら|言いにく|いいにく|とは言えない|とはいえない|とは言いきれ|とはいいきれ|すべてではない|全てではない|全部ではない|ぜんぶではない|ちょっとちがう|ちょっと違う|すこしちがう|少し違う|ちかいけど|近いけど|ちかい|近い|おしい|惜しい|メインではない|めいんではない|メインじゃない|めいんじゃない|9割いいえ|9わりいいえ|ではない|じゃない)/.test(s)) return 'pn';
+  if (/(部分的|ぶぶんてき|一部|いちぶ|場合による|ばあいによる|ものによる|おおむね|だいたい|大体|ほぼ|ある意味|あるいみ|半分|はんぶん|ときどき|時々|たまに|ことがある|こともある|けど|けれど|でも|要素による|ようそによる|まあはい|まぁはい|9割はい|9わりはい)/.test(s)) return neg0 ? 'pn' : 'py';
+  if (neg0) return 'n';
+  if (/^(はい|うん|そう|yes|いえす|そうです|そのとおり|その通り|あってる|合ってる)/.test(s)) return 'y';
+  if (/^(わからない|わかりません|わかんない|びみょう|微妙|どちらとも|どっちとも|むずかしい|難しい|なんとも)/.test(s) || /(わからない|わかんない)/.test(s)) return 'u';
+  return null;
+};
 K.code = function (x) { return x === 1 ? 'y' : x === 0 ? 'n' : 'u'; };
 
 // ---------- 自由入力の質問を読む ----------
@@ -265,10 +340,18 @@ K.code = function (x) { return x === 1 ? 'y' : x === 0 ? 'n' : 'u'; };
 var PFX = /^(ねえ|ねぇ|えっと|えーと|じゃあ|では|それって|それは|それ|あれは|おだいは|お題は|こたえは|答えは|もしかして|ひょっとして|たぶん|ずばり|ズバリ|すばり|ますたー|まずは|つぎに|次に)+/;
 function negAfter(t, end) {   // 一致した語の すぐ後ろが 否定 か
   var rest = t.slice(end, end + 9);
-  return /^(.{0,4}?)(じゃない|じゃなく|ではない|ではなく|ない|なく|ません|ず[？?]?$|ぬ)/.test(rest) && !/^(.{0,2})(ないぞう|ないふ)/.test(rest);
+  if (/^(.{0,2})(ないぞう|ないふ)/.test(rest)) return false;
+  var m = rest.match(/^(.{0,4}?)(じゃない|じゃなく|ではない|ではなく|ない|なく|ません|ず[？?]?$|ぬ[？?]?$)/); if (!m) return false;
+  var pre = t.slice(0, end) + m[1], after = rest.slice(m[0].length), w = m[2];
+  // 「鳴く」「泣く」の なく（わんって なく？）は 否定ではない
+  if (w === 'なく' && !/(く|で|じゃ|は|も|し|け|せ|れ|ら|め|べ|ま)$/.test(pre)) return false;
+  // 「ない」のあとが ことばの続き（いろいろないろ／ないしょ）なら 否定ではない
+  if (w === 'ない' && after && !/^(の|です|か|よ|ね|[？?!！]|けど|って|でしょ|んだ|もの|こと|じゃ|と|ん|わ|ぞ|さ|や|し|から|ほう|方)/.test(after)) return false;
+  if (w === 'ない' && /(いろいろ|おおき|大き|ちいさ|小さ|きれい|へん|みん|すく|少|あぶ|危|おさ|せつ|あど|かい|うち|まん|ばん)$/.test(pre) && !/(く|で|じゃ|は)$/.test(pre)) return false;
+  return true;
 }
 function sizeRule(t) {   // 大きさの言い回し → s1/s2/s3（span も返す）
-  var big = /(大き|おおき|でか|でっか|長身)/, small = /(小さ|ちいさ|ちっちゃ|ちっさ|みに)/;
+  var big = /(大き|おおき|おっき|でか|でっか|長身|巨大|きょだい)/, small = /(小さ|ちいさ|ちっちゃ|ちっさ|ちびっ)/;
   var refs = [[/(手のひら|てのひら|手|りんご|こぶし|すまほ)/, 's1'], [/(人間|にんげん|ひと|人|大人|おとな|自分|わたし|ぼく)/, 's2'], [/(家|いえ|建物|たてもの|びる|車|くるま)/, 's3']];
   var mb = t.match(big), ms = t.match(small);
   if (!mb && !ms) return null;
@@ -280,6 +363,13 @@ function sizeRule(t) {   // 大きさの言い回し → s1/s2/s3（span も返�
   if (/両手|りょうて|抱え|かかえ/.test(t)) { var m2 = t.match(/両手|りょうて|抱え|かかえ/); return { a: K.AI.s1, neg: !!ms, spans: [span, [m2.index, m2.index + m2[0].length]] }; }
   if (mb) return { a: K.AI.s2, neg: false, loose: true, spans: [span] };   // ただ「大きい？」→ 人より大きいか で答える
   return { a: K.AI.s1, neg: true, loose: true, spans: [span] };           // ただ「小さい？」→ 手のひら以下か
+}
+// 「ぞうより大きい？」：お題ずかんの別の語と 大きさを くらべる
+function sizeCmp(db, t) {
+  var m = t.match(/^(.+?)(より|よりも|とくらべて|と比べて)(も)?(大き|おおき|おっき|でか|でっか|小さ|ちいさ|ちっちゃ|ちっさ)(い|く|な)?(です|の|か|かな)*$/); if (!m) return null;
+  if (/^(家|いえ|建物|たてもの|びる|ひと|人|人間|にんげん|大人|おとな|自分|じぶん|手|て|手のひら|てのひら|わたし|ぼく)$/.test(m[1])) return null;
+  var id = db.byNorm[m[1]]; if (id == null) id = K.nearName(db, m[1]); if (id == null || id < 0) return null;
+  return { t: 'cmp', w: id, big: /^(大き|おおき|おっき|でか|でっか)/.test(m[4]) ? 1 : 0 };
 }
 var COMPILED = null;
 function compile() {
@@ -302,11 +392,12 @@ var FW = ('を が に で は も の と へ や か ね よ な さ ぞ わ �
   'もの 物 こと とき 時 やつ 感じ かんじ っぽい ぽい みたい 系 なかま 仲間 種類 しゅるい 一種 いっしゅ 的 よく とても すごく ちょっと けっこう 結構 たくさん いっぱい ふつう 普通 ' +
   'みんな 全部 ほとんど 主に おもに 本当に ほんとうに たいてい だいたい 大体 必ず かならず いつも 何か なにか なんか 何 ずっと まあ わりと 割と 結構 けっこう すこし 少し ' +
   'それって それは それ これ あれ ねえ ねぇ えっと えーと じゃあ では もしかして ひょっとして たぶん おだいは お題は こたえは 答えは ずばり すばり つぎに 次に まずは ますたー ' +
-  '食べる たべる 食べます たべます 飲む のむ 飲みます のみます の中 相手 いない いません ありません なかった かける お ご 名前 なまえ たぐい 類 るい 製 せい らしい 時期 じき として 自分 じぶん 人気 にんき どこか 見る 見られる 見える 見かける みる みえる 来た きた 来る くる 生えてる はえてる 生えて 出る でる 出ます でます 出す だす 書いてある かいてある 書いて ついてる ついている 付いてる 浮かんでる 浮かぶ うかんでる 育つ そだつ 入る はいる 入ってる はいってる 入って 買える 治す なおす さす 人 ひと ていう という っていう てる ている ています ちゃう じゃう もう まだ 色 いろ 形 かたち').split(' ').map(function (x) { return K.normL(x); }).filter(Boolean);
+  '食べる たべる 食べます たべます 飲む のむ 飲みます のみます の中 相手 いない いません ありません なかった かける お ご 名前 なまえ たぐい 類 るい 製 せい らしい 時期 じき として 自分 じぶん 人気 にんき どこか 見る 見られる 見える 見かける みる みえる 来た きた 来る くる 生えてる はえてる 生えて 出る でる 出ます でます 出す だす 書いてある かいてある 書いて ついてる ついている 付いてる 浮かんでる 浮かぶ うかんでる 育つ そだつ 入る はいる 入ってる はいってる 入って 買える 治す なおす さす 人 ひと すむ すんでる すんでいる すんでいます くらす くらしてる 住む 住んでる 住んでいる 暮らす 暮らしてる 生まれ うまれ だったりする だったり したりする めっちゃ めちゃ めちゃくちゃ すっごく すっごい すごい すんごく ちょー とっても かなり ほんと ていう という っていう てる ている ています ちゃう じゃう もう まだ 色 いろ 形 かたち').split(' ').map(function (x) { return K.normL(x); }).filter(Boolean);
 var FWSET = {}, FWMAX = 0; FW.forEach(function (x) { FWSET[x] = 1; if (x.length > FWMAX) FWMAX = x.length; });
 var INFL = /^(させる|られる|れる|せる|かった|くない|くて|ければ|ません|ました|ます|まし|ない|なく|って|った|ている|てる|いて|いた|える|ける|げる|べる|める|れ|る|く|ぐ|ぶ|む|う|つ|す|い|き|ぎ|び|み|り|ち|し|け|げ|べ|め|え|せ|て|た|ん|っ|そう)+/;
 // 活用語尾をつけてよい「語幹」（漢字で終わる・かなの動詞/形容詞の語幹）。「たいや＋き」のような名詞には つけない
 var STEMEND = /([\u4e00-\u9fff]|およ|もぐ|あそ|なげ|ひか|うご|うごか|あま|から|すっぱ|にが|つめた|あたたか|あったか|やわらか|おも|おもた|かた|あぶな|こわ|かわい|まる|なが|ほそ|ひえ|もえ|ぬれ|たべ|たべられ|たべれ|のめ|のれ|もて|はこべ|よめ|よん|にぎ|あら|とべ|とん|とぶ|さむ|あつ|あか|あお|くろ|しろ|きいろ|ちゃいろ|もちはこ|はこ|うごけ|およい|とんで|しましま|うるさ|おおき|でか|でっか|ちいさ|ちっちゃ|ちっさ|いきて|うごけ|のれま|のめま|たべられ|ひかる|ひかり|さわ|かる)$/;
+var VEND = /^(る|う|ぶ|つ|む|く|す|ぐ|える|べる|れる|ける|める|げる|せる|って|った|ってる|ます|ません|ない|ている|てる|れる|られる|えない|べない|らない|わない|たない|ばない|まない|かない)$/;
 function fwOnly(seg, afterHit) {   // seg が 意味の軽いことばだけで できているか（単語分割）
   if (!seg) return true;
   if (afterHit) { var m = seg.match(INFL); if (m && m[0].length <= 5 && fwOnly(seg.slice(m[0].length), false)) return true; }
@@ -324,6 +415,7 @@ function residue(t, spans, out) {
     if (cov[i]) { i++; continue; }
     var j = i; while (j < t.length && !cov[j]) j++;
     var seg = t.slice(i, j); if (/^[0-9]+$/.test(seg)) { if (!out) return true; out.push(seg); }
+    else if (i > 0 && cov[i - 1] && j === t.length && VEND.test(seg)) { }   // 文の終わりの 活用語尾（「つか＋う」「はし＋る」）
     else if (!fwOnly(seg, !!after[i])) { if (!out) return true; out.push(seg); }
     i = j;
   }
@@ -345,6 +437,17 @@ function objUse(a, rest) {
   }
   return false;
 }
+var SIMKIND = { person: 1, ani: 1, bird: 1, fish: 1, bug: 1, pla: 1, veh: 1, food: 1, building: 1, tool: 1, liv: 1 };
+// ふつうの名詞（この中から 特ちょうの語が はじまっていたら、その一致は使わない）
+var NOUNS0 = 'さかな おとな にんげん おかね ひこうき かなづち あかちゃん おなか せなか まなか かながわ たまご たまねぎ なかま なかみ ながぐつ くちばし はなび はなし あしもと おもちゃ くだもの のりもの たべもの のみもの いきもの きもの ゆきだるま おまつり やさい しろくま あおむし くろねこ あかとんぼ しかく さんかく まるた あまぐ あまど からだ かかと あたま おしり しっぽ からす かがみ かみなり すいか きつね おにぎり'.split(' ');
+var NOUNSET = null;
+function insideNoun(t, pos, len) {
+  if (pos === 0 || !/[\u3041-\u3093]/.test(t[pos - 1]) || !/^[\u3041-\u3093ー]+$/.test(t.slice(pos, pos + len))) return false;
+  if (!NOUNSET) { NOUNSET = {}; NOUNS0.forEach(function (x) { NOUNSET[K.normL(x)] = 1; }); }
+  for (var a = Math.max(0, pos - 5); a < pos; a++) for (var b = pos + 1; b <= Math.min(t.length, a + 7); b++) if (NOUNSET[t.slice(a, b)] && t.slice(a, b).indexOf(t.slice(pos, pos + len)) < 0) return true;
+  return false;
+}
+K.addNouns = function (db) { if (!NOUNSET) { NOUNSET = {}; NOUNS0.forEach(function (x) { NOUNSET[K.normL(x)] = 1; }); } db.words.forEach(function (w) { w.n.forEach(function (x) { if (x.length >= 3 && /^[\u3041-\u3093ー]+$/.test(x)) NOUNSET[x] = 1; }); }); };
 // 単語さがし（お題の名前が文中にあるか）
 var TAILOK = /^(じゃない|じゃないの|かな|でしょ|だよね|のこと|かも|っぽい|でしょう|ですかね|なの|では)?$/;
 function findWord(db, core) {   // 「それは○○？」の○○が お題の名前で始まり、あとは語尾だけ
@@ -389,6 +492,14 @@ K.stripGuess = function (text, db) {   // db を渡すと、語尾を1つずつ�
 // 送りがなの まざった書き方（食べもの・乗りもの・生きもの・飲みもの…）を 漢字の「物」にそろえる
 K.okuri = function (s) { return String(s).replace(/([\u4e00-\u9fff][\u3041-\u3093])もの/g, '$1物').replace(/([\u4e00-\u9fff])もの/g, '$1物'); };
 K.parse = function (db, text) {
+  var r0 = parse0(db, text);
+  if (r0.t === 'fact') {   // 「ながーい」「おっきーい」：ひらがなの間の のばし棒を とって もう一度
+    var t2 = K.okuri(String(text || '')).replace(/([\u3041-\u3093])[ー〜~]+(?=[\u3041-\u3093？?]|$)/g, '$1');
+    if (t2 !== K.okuri(String(text || ''))) { var r2 = parse0(db, t2); if (r2.t === 'attr') return r2; }
+  }
+  return r0;
+};
+function parse0(db, text) {
   var raw = K.okuri(String(text || '')), t = K.normL(raw);
   if (!t) return { t: 'none' };
   // ①「それは○○ですか？」型（○○がお題の名前と一致。書き方のゆれも）
@@ -400,6 +511,9 @@ K.parse = function (db, text) {
   if (nn >= 0) return { t: 'guess', w: nn, text: core, near: 1 };
   // ② 特ちょう
   var C = compile(), hits = [];
+  var cmp = sizeCmp(db, t); if (cmp) return cmp;
+  var ko = t.match(/^(.+?)(のなかま|の仲間|のいっしゅ|の一種|のしゅるい|の種類|みたいなもの|みたいなやつ|ににてる|に似てる|のよう)(です|なの|か|かな|だよね|でしょ)*$/);   // 「でんしゃのなかま？」
+  if (ko) { var kw = db.byNorm[ko[1]]; if (kw == null) kw = K.nearName(db, ko[1]); if (kw != null && kw >= 0) return { t: 'kindof', w: kw, text: t }; }
   var sz = sizeRule(t); if (sz) hits.push({ a: sz.a, neg: sz.neg, pos: sz.spans[0][0], end: sz.spans[0][1], spans: sz.spans, len: 3, loose: sz.loose, size: true });
   var blocked = [];
   C.forEach(function (c) { if (c.stop) { var j = t.indexOf(c.s); while (j >= 0) { blocked.push([j, j + c.s.length]); j = t.indexOf(c.s, j + 1); } } });   // stop語（例：「動物園」）が当たった範囲は、ほかの短い語（「動物」）に使わせない
@@ -413,6 +527,8 @@ K.parse = function (db, text) {
     while (idx >= 0) {
       var inBlock = blocked.some(function (b) { return idx >= b[0] && idx < b[1] && c.s.length < b[1] - b[0]; });
       if (!inBlock && objUse(c.a, t.slice(idx + c.s.length))) inBlock = true;
+      if (!inBlock && SIMKIND[K.ATTRS[c.a].id] && /^(に|と)?(にて|似て|にた|似た|そっくり|みたい|っぽ|ぽい)|^(の)?(ような|よう)/.test(t.slice(idx + c.s.length))) inBlock = true;   // 「人間に似てる？」はその物ではない
+      if (!inBlock && insideNoun(t, idx, c.s.length)) inBlock = true;   // 「さかながいる」の「ながい」
       if (!inBlock) hits.push({ a: c.a, neg: negAfter(t, idx + c.s.length), pos: idx, end: idx + c.s.length, len: c.s.length, gen: c.gen });
       idx = t.indexOf(c.s, idx + 1);
     }
@@ -435,7 +551,8 @@ K.parse = function (db, text) {
   if (K.DEBUG) K.DEBUG.push(K._resSegs(t, spans));
   if (main.length && !res) {
     var h = main[0];
-    return { t: 'attr', kana: K.ATTRS[h.a].id === 'fly' && !/[飛空]/.test(t) ? 1 : 0, a: h.a, neg: h.neg, loose: !!h.loose, size: h.size ? 1 : 0, also: main.slice(1).filter(function (x) { return !x.gen; }).map(function (x) { return { a: x.a, neg: x.neg }; }) };
+    if (/(もの|の|やつ|のも|ものも)もある|もあるの|(^|[^お])(なか|中身|なかみ)(は|が|の|って)|ものによる|しゅるいによる|種類による/.test(t)) var some = 1;
+    return { t: 'attr', some: some ? 1 : 0, kana: K.ATTRS[h.a].id === 'fly' && !/[飛空]/.test(t) ? 1 : 0, a: h.a, neg: h.neg, loose: !!h.loose, size: h.size ? 1 : 0, also: main.slice(1).filter(function (x) { return !x.gen; }).map(function (x) { return { a: x.a, neg: x.neg }; }) };
   }
   // ③ 特ちょうだけでは説明できない → お題ごとの「関係ることば」で答える
   var out = { t: 'fact', text: t };
@@ -449,7 +566,8 @@ K.answerParsed = function (db, p, secret) {
     if (p.w === secret) return 'correct';
     if (p.w < 0) return K.isAnswer(db, p.text, secret) ? 'correct' : 'n';
     var w = db.words[p.w];   // ほかのお題の名前：ふつうは いいえ。ただし お題に深く関係することば（「すし」に「まぐろ」）なら わからない
-    if (w.n.some(function (x) { return x.length >= 2 && K.factHits(db, secret, x).some(function (h) { return h.s === x; }); })) return 'u';
+    if (w.n.some(function (x) { return x.length >= 2 && K.factHits(db, secret, x).some(function (h) { return h.s === x; }); })) return /^(hob|spo)$/.test(w.cat) && db.words[secret].cat !== w.cat ? 'sp' : 'u';   // 「テレビゲーム？」→ マインクラフトなら「はい、もっと具体的に」
+    var sw0 = db.words[secret]; if (sw0.n.some(function (x) { return x.length >= 2 && K.factHits(db, p.w, x).some(function (h) { return h.s === x; }); })) return 'u';   // 逆向き（「けっこんしき」に「ゆびわ」）
     return 'n';
   }
   if (p.t === 'attr') {
@@ -457,23 +575,46 @@ K.answerParsed = function (db, p, secret) {
     if (p.loose && db.words[secret].size === 2) return 'u';
     // ひらがなの「とぶ」は 跳ぶ（ジャンプ）かもしれない
     if (p.kana && K.ATTRS[p.a].id === 'fly' && K.factHits(db, secret, '跳ぶじゃんぷ').length) return 'u';
+    var pt = db.words[secret].part && db.words[secret].part[p.a];
+    if (pt && !(p.also && p.also.length)) return p.neg ? (pt === 'py' ? 'pn' : 'py') : pt;   // 「りんごは生き物？」→ 部分的にそう
     var all = [{ a: p.a, neg: p.neg }].concat(p.also || []), got = {};
     for (var i = 0; i < all.length; i++) {
       var x = db.words[secret].v[all[i].a]; if (x === 2) { got.u = 1; continue; }
       var yes = x === 1; if (all[i].neg) yes = !yes; got[yes ? 'y' : 'n'] = 1;
     }
-    if (got.y && got.n) return 'u';   // 特ちょうどうしで答えが割れる → 自信がないので わからない
+    if (got.y && got.n) return p.loose && !p.neg && p.also && p.also.length === 1 && !p.also[0].neg && K.ATTRS[p.also[0].a].g === 'kind' && !got.u ? 'pn' : 'u';   // 「大きい動物？」でうさぎ：一部だけ あたり → ちょっと ちがう
+    if (got.n && p.some) return 'u';   // 「すっぱいのもある？」「中は黄色？」→ ずかんの「いいえ」では言い切れない
     return got.n ? 'n' : got.u ? 'u' : 'y';
+  }
+  if (p.t === 'kindof') {   // 別のお題「の仲間？」：関係ることばに その語があれば はい、なければ わからない
+    if (p.w === secret) return 'y';
+    var ws = db.words[p.w], me = db.words[secret];
+    if (ws.n.some(function (x) { return x.length >= 2 && K.factHits(db, secret, x).length; }) || me.n.some(function (x) { return x.length >= 2 && K.factHits(db, p.w, x).length; })) return 'y';
+    return 'u';
+  }
+  if (p.t === 'cmp') {   // 大きさ 1〜4（0=形がない）で くらべる。同じ大きさの段なら わからない
+    var a1 = db.words[secret].size, b1 = db.words[p.w].size; if (!a1 || !b1 || a1 === b1 || p.w === secret) return 'u';
+    return (a1 > b1) === !!p.big ? 'y' : 'n';
   }
   if (p.t === 'fact') {
     var tr = K.factTruth(db, secret, p);
+    var sw = db.words[secret].v, SEAS = ['spring', 'summer', 'autumn', 'winter'];
+    if (p.a != null && !p.neg && SEAS.indexOf(K.ATTRS[p.a].id) >= 0 && sw[p.a] === 0 && SEAS.some(function (x) { return sw[K.AI[x]] === 1; }) && !/(にも|でも|も|いつでも|一年中|いちねんじゅう)/.test(p.text)) return 'n';   // 季節もの（こたつ）に「夏に使う？」→ いいえ
+    if (tr === 1 && /(ひるま|昼|ひるに|ひるは|朝|あさに|あさは)/.test(p.text) && sw[K.AI.night] === 1) return 'u';
     if (p.a != null && tr !== 2 && /^(spring|summer|autumn|winter|night|kick)$/.test(K.ATTRS[p.a].id)) {   // 文の中の特ちょうと 関係ることばの答えが割れる → わからない
       var xa = db.words[secret].v[p.a]; if (xa !== 2) { var ya = (xa === 1) !== !!p.neg; if (ya !== (tr === 1)) return 'u'; }
     }
+    if (tr === 1 && isHyper(db, secret, p.text)) return 'sp';   // 「格闘技？」とだけ聞かれて、それが お題の“上のなかま”なら「はい、もっと具体的に」
     return tr === 1 ? 'y' : tr === 0 ? 'n' : 'u';
   }
   return 'u';
 };
+// 質問がことば1つだけ（「かくとうぎ？」）で、それが お題の なかま（facts の〜系・〜の一種）なら true
+var HYPER = /^(かくとうぎ|格闘技|ぶどう|武道|きゅうぎ|球技|すぽーつ|ういんたーすぽーつ|まりんすぽーつ|げーむ|ぼーどげーむ|ゆうぐ|遊具|がっき|楽器|だがっき|打楽器|かでん|家電|ぶんぼうぐ|文房具|のりもの|乗り物|どうぶつ|動物|ほにゅうるい|哺乳類|はちゅうるい|爬虫類|こんちゅう|昆虫|くだもの|果物|やさい|野菜|おかし|お菓子|わしょく|和食|ようしょく|洋食|ちゅうかりょうり|中華料理|めんるい|麺類|ぎょうじ|行事|おまつり|祭り|しゅみ|趣味|あそび|遊び|うんどう|運動|だげきけい|打撃系|くみわざ|組み技)$/;
+function isHyper(db, wid, text) {
+  var core = K.normL(text).replace(/(ですか|なの|かな|だよね|でしょ|ですね|系|けい|のなかま|の仲間|のいっしゅ|の一種)+$/, '');
+  return HYPER.test(core) && K.factHits(db, wid, core).length > 0;
+}
 // 「関係ることば」の質問が お題 wid で「はい」になるか（NPCの推理用）：1=はい 0=いいえ（否定形） 2=わからない
 K.factTruth = function (db, wid, p) {
   var fh = K.factHits(db, wid, p.text); if (!fh.length) return 2;
@@ -486,14 +627,47 @@ K.isAnswer = function (db, text, secret) {
   if (w.n.indexOf(t) >= 0 || w.n.indexOf(K.normL(text)) >= 0) return true;
   return K.nearName(db, t) === secret;
 };
-// NPC が口にする質問文（同じ属性でも言い回しを少し変える）
+// NPC が口にする質問文（同じ属性でも言い回しをいろいろ変える。手書き＋ひな形）
 K.PHRASES = {
-  liv: ['それって 生き物？', '生きてるもの？'], ani: ['動物？', '動物のなかま？'], pla: ['植物？', '植物のなかま？'], person: ['人のこと？', '人間？'],
-  food: ['食べ物？', 'それって 食べ物？'], edible: ['食べられる？', 'それ、食べられる？'], drink: ['飲み物？', '飲めるもの？'], veh: ['乗り物？', '人が乗れるもの？'],
-  made: ['人が作ったもの？', '人工のもの？'], tool: ['道具？', '何かに使う道具？'], elec: ['電気で動く？', '電気を使う？'], place: ['場所？', '行ける場所？'], building: ['建物？'],
-  s1: ['手のひらより大きい？', '片手で持てるより大きい？'], s2: ['人より大きい？', '大人より大きい？'], s3: ['家より大きい？'],
-  home: ['家にある？', 'ふつうの家にある？'], store: ['お店で買える？', '売ってる？'], outside: ['外にある？', '外で見かける？'], kitchen: ['台所にある？', 'キッチンで使う？']
+  liv: ['それって 生き物？', '生きてるもの？', '命があるもの？', 'いきもの だったりする？'], ani: ['動物？', '動物のなかま？', 'どうぶつ だったりする？', '動物系？'],
+  bird: ['鳥？', '鳥のなかま？', 'とり だったりする？'], fish: ['魚？', 'お魚のなかま？', '魚っぽいもの？'], bug: ['虫？', '虫のなかま？', 'むし だったりする？'],
+  pla: ['植物？', '植物のなかま？', '植物っぽいもの？'], person: ['人のこと？', '人間？', '人のこと？'], job: ['仕事？', '職業のこと？', 'お仕事の名前？'],
+  food: ['食べ物？', 'それって 食べ物？', '食べるもの？', 'ごはん系？'], edible: ['食べられる？', 'それ、食べられる？', '口に入れて食べられる？'], drink: ['飲み物？', '飲めるもの？', 'のみもの だったりする？'],
+  fruit: ['果物？', 'くだもの？', 'フルーツ？'], veg: ['野菜？', 'やさい？', 'お野菜のなかま？'], dish: ['料理？', 'りょうりの名前？', 'お店のメニューにありそう？'], sweets: ['お菓子？', 'デザート？', 'おやつに食べる？'],
+  veh: ['乗り物？', '人が乗れるもの？', 'のりもの だったりする？'], made: ['人が作ったもの？', '人工のもの？', '自然のものじゃなくて 作られたもの？'],
+  tool: ['道具？', '何かに使う道具？', 'つかう道具？'], elec: ['電気で動く？', '電気を使う？', 'コンセントや電池がいる？'], place: ['場所？', '行ける場所？', 'どこかの場所の名前？'], building: ['建物？', 'たてもの？'],
+  sport: ['スポーツ？', '運動のなかま？', '体を動かして競うもの？'], event: ['行事？', 'イベント？', '年中行事とか？'], nature: ['自然のもの？', '自然にあるもの？'],
+  s1: ['手のひらより大きい？', '片手で持てるより大きい？', 'ポケットに入らないくらい？'], s2: ['人より大きい？', '大人より大きい？', '人間よりでかい？'], s3: ['家より大きい？', '建物よりでかい？'],
+  carry: ['手で持ち運べる？', '持って歩ける？'], heavy: ['重い？', 'ずっしり重い？'], round: ['丸い？', 'まるい形？'], square: ['四角い？', '四角っぽい？'], long: ['細長い？', 'ながっぽそい？'],
+  soft: ['やわらかい？', 'ふにゃっとしてる？'], hard: ['かたい？', 'カチカチ？'],
+  red: ['赤い？', '赤色？'], white: ['白い？', '白っぽい？'], black: ['黒い？', '黒っぽい？'], yellow: ['黄色い？', 'きいろっぽい？'], green: ['緑色？', 'みどりっぽい？'], blue: ['青い？', '青っぽい？'], brown: ['茶色い？', '茶色っぽい？'], pink: ['ピンク色？', 'ピンクっぽい？'],
+  home: ['家にある？', 'ふつうの家にある？', 'うちにもある？'], store: ['お店で買える？', '売ってる？', 'お店で売ってそう？'], outside: ['外にある？', '外で見かける？'], kitchen: ['台所にある？', 'キッチンで使う？'],
+  bath: ['お風呂や洗面所にある？', 'お風呂で使う？'], school: ['学校にある？', '学校で見る？'], sea: ['海にある？', '海にいる？', '海に関係ある？'], sky: ['空にある？', '空で見る？'], mount: ['山や森にある？', '山にいる？'],
+  city: ['町にある？', '町なかで見る？'], farm: ['畑や牧場にある？', '農家さんに関係ある？'], zoo: ['動物園にいる？', '動物園や水族館で見られる？'],
+  japan: ['日本っぽいもの？', '和風？'], foreign: ['外国から来たもの？', '外国っぽい？'], move: ['動く？', '自分で動く？'], legs: ['足がある？', 'あしある？'], fur: ['毛が生えてる？', 'ふさふさ？'],
+  fly: ['空を飛ぶ？', '飛べる？'], swim: ['泳ぐ？', '水の中を泳げる？'], light: ['光る？', 'ピカッと光る？'], sound: ['音が出る？', '音がする？', '鳴る？'],
+  hot: ['熱い？', 'あったかい？'], cold: ['冷たい？', 'ひんやりしてる？'], sweet: ['甘い？', 'あまーい？'], spicy: ['辛い？', 'ピリッとする？'], sour: ['すっぱい？'], bitter: ['苦い？'],
+  water: ['水に関係ある？', '水を使う？'], fire: ['火に関係ある？', '火を使う？'], wood: ['木でできてる？', '木製？'], metal: ['金属でできてる？', '鉄とか金属？'], paper: ['紙でできてる？', '紙？'], cloth: ['布でできてる？', '布っぽい？'], glass: ['ガラスでできてる？'],
+  wear: ['身につけるもの？', '着たりつけたりする？'], write: ['字を書くのに関係ある？', '書くときに使う？'], play: ['遊ぶもの？', '遊びに使う？'], kids: ['子どもが好き？', '子どもに人気？'],
+  music: ['音楽に関係ある？', '音楽で使う？'], danger: ['危ない？', '気をつけないと危ない？'], wheels: ['タイヤがある？', '車輪がついてる？'], pet: ['ペットとして飼える？', 'ペットにできる？'],
+  tail: ['しっぽがある？'], horn: ['角がある？'], stripe: ['しま模様？', 'しましま？'], carn: ['肉食？', 'ほかの動物を食べる？'], tall: ['背が高い？', '高さがある？'],
+  ball: ['ボールを使う？', 'ボール使う？'], team: ['チームでやる？', '何人かでチームになる？'], racket: ['ラケットを使う？'], kick: ['足でける？'], hand: ['手を使う？', '手でやる？'], throw: ['投げる？'],
+  fight: ['相手と戦う？', '対戦する？'], snow: ['雪に関係ある？'], head: ['頭や顔につける？', '頭につける？'], feet: ['足にはく？'], contain: ['中に物を入れる？', '何かを入れておくもの？'],
+  read: ['読むもの？'], rice: ['お米からできてる？', 'お米を使う？'], noodle: ['めん類？', '麺？'], bread: ['パンや小麦粉を使う？'], spoon: ['スプーンで食べる？'], chop: ['おはしで食べる？'], handeat: ['手で持って食べる？'],
+  root: ['土の中で育つ？'], cute: ['かわいい？'], money: ['お金に関係ある？'], cost: ['お金がかかる？'], solo: ['一人でできる？', 'ひとりでもできる？'], equip: ['道具を使う？'],
+  sleep: ['寝るときに使う？'], clean: ['そうじや洗うのに使う？'], cut: ['物を切る？'], eatuse: ['食べるときに使う？'], hospital: ['病院にある？', '病院に関係ある？'],
+  spring: ['春に関係ある？', '春っぽい？'], summer: ['夏に関係ある？', '夏っぽい？'], autumn: ['秋に関係ある？', '秋っぽい？'], winter: ['冬に関係ある？', '冬っぽい？'], night: ['夜に関係ある？', '夜に見る？']
 };
-K.phrase = function (ai, r) { var a = K.ATTRS[ai], ph = K.PHRASES[a.id]; if (ph && r) return ph[Math.floor(r() * ph.length)]; return a.q; };
+var PRE_ANY = ['', '', '', 'ねえ、', 'ちなみに ', 'えっと、', 'もしかして '], PRE_Y = ['じゃあ ', 'ってことは… ', 'なるほど、じゃあ ', 'それなら '], PRE_N = ['じゃあ ', 'ふむ…なら ', 'そっか、じゃあ '];
+// ai の言い回しを1つ（used＝もう言った文。prev＝直前の答え 'y'/'n'/…）
+K.phrase = function (ai, r, used, prev) {
+  var a = K.ATTRS[ai], ph = (K.PHRASES[a.id] || []).slice(); if (ph.indexOf(a.q) < 0) ph.push(a.q);
+  if (!r) return ph[0];
+  var fresh = used ? ph.filter(function (x) { return !used[x]; }) : ph; if (!fresh.length) fresh = ph;
+  var q = fresh[Math.floor(r() * fresh.length)];
+  if (used) used[q] = 1;
+  var pre = prev === 'y' && r() < 0.45 ? PRE_Y : prev === 'n' && r() < 0.35 ? PRE_N : PRE_ANY;
+  return (pre[Math.floor(r() * pre.length)] + q).replace(/^(\S+) それって/, '$1それって');
+};
 if (typeof module !== 'undefined' && module.exports) module.exports = K; else root.SKB = K;
 })(this);

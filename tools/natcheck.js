@@ -7,7 +7,7 @@ function run(file, verbose) {
   let ok = 0, wrong = 0, unk = 0, amb = 0, miss = [], bad = [];
   rows.forEach(([w, q, e]) => {
     const id = find(w); if (id < 0) { miss.push(w); return; }
-    const p = K.parse(DB, q); let a = K.answerParsed(DB, p, id); if (a === 'correct') a = 'y';
+    const p = K.parse(DB, q); let a = K.answerParsed(DB, p, id); if (a === 'correct' || a === 'py' || a === 'sp') a = 'y'; if (a === 'pn') a = 'n';   // あいまいな答えは そちら寄りとして採点
     if (e === '?') { amb++; return; }
     if (a === 'u') { unk++; if (verbose) bad.push('U ' + w + '|' + q + '|' + e + ' ' + JSON.stringify(p) + (p.t === 'attr' ? ' ' + K.ATTRS[p.a].id : '')); }
     else if (a === e) ok++;

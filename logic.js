@@ -114,7 +114,7 @@ L.ask = function (G, p, q, now, meta) {
   if (parsed.t === 'guess') {   // 「それは○○？」は 自動で判定（ことばが一致すれば正解）
     var ok = parsed.w === G.secret || (parsed.w < 0 && K.isAnswer(G.db, parsed.text, G.secret));
     if (ok) { resolve(G, e, 'correct', now, 'auto'); return null; }
-    if (isNpc(G, G.master) || parsed.w >= 0) { e.due = now + rr(G, G.T.npcAns) * (isNpc(G, G.master) ? 1 : 0.3); e.auto = parsed.w >= 0 ? K.answerParsed(G.db, parsed, G.secret) : 'n'; if (e.auto === 'correct') e.auto = 'n'; G.pending.push(e); return null; }
+    if (isNpc(G, G.master) || parsed.w >= 0) { e.due = now + rr(G, G.T.npcAns) * (isNpc(G, G.master) ? 1 : 0.3); e.auto = parsed.w >= 0 ? K.answerParsed(G.db, parsed, G.secret) : 'n'; if (e.auto === 'correct') e.auto = 'n'; if (e.auto === 'n' && parsed.w >= 0 && isNpc(G, G.master) && nearRank(G, parsed.w) < 6) e.auto = 'pn'; /* おしい名前には「部分的に違う（近い）」 */ G.pending.push(e); return null; }
   }
   if (isNpc(G, G.master)) { e.due = now + rr(G, G.T.npcAns); e.auto = K.answerParsed(G.db, parsed, G.secret); if (e.auto === 'correct') e.auto = 'n'; G.pending.push(e); }
   else { e.due = now + G.T.mAns; e.human = true; G.pending.push(e); }
@@ -125,26 +125,44 @@ function guessParse(G, text) {
   return { t: 'guess', w: w != null ? w : -1, text: core || text };
 }
 // おだいばん（人間）が答える：ans = 'y'|'n'|'u'|'correct'
-L.answer = function (G, p, qid, ans, now) {
+L.answer = function (G, p, qid, ans, now, note) {
   if (G.phase !== 'qa' || p !== G.master) return 'いまは答えられません';
   var e = G.pending.filter(function (x) { return x.qid === qid; })[0]; if (!e) return 'その質問は もう答えました';
-  if (['y', 'n', 'u', 'correct'].indexOf(ans) < 0) return 'はい／いいえ／わからない で答えてね';
-  resolve(G, e, ans, now, 'master');
+  if (K.ANSWERS.indexOf(ans) < 0) return 'はい／いいえ／わからない で答えてね';
+  resolve(G, e, ans, now, 'master', note);
   return null;
 };
-function resolve(G, e, ans, now, by) {
+// 親の ひとこと（「概念」「科学的」「もっと具体的」など）を 特ちょうの 弱い証拠にする
+var HINTK = [[/(概念|がいねん|抽象|ちゅうしょう|形のない|かたちのない)/, 'abstract', 'y'], [/(科学|かがく|物理|ぶつり|理科|りか)/, 'science', 'y'], [/(時間|じかん|時の|ときの)/, 'time', 'y'],
+  [/(人工|じんこう|人が作|ひとがつく)/, 'made', 'y'], [/(もともとある|自然に|しぜんに|天然)/, 'made', 'n'], [/(さわれない|触れない)/, 'touch', 'n'], [/(目に見えない|見えない|みえない)/, 'visible', 'n'], [/(ゲーム)/, 'videogame', 'y'], [/(作品|キャラ|商品|固有)/, 'proper', 'y']];
+function hintKeys(G, note) {
+  var t = String(note);
+  HINTK.forEach(function (h) { var i = K.ATTRS.findIndex(function (a) { return a.id === h[1]; }); if (i >= 0 && h[0].test(t)) { var r = { p: -1, a: i, neg: false, ans: h[2] === 'y' ? 'py' : 'pn' }; B.apply(G.pub, r); } });
+}
+function nearRank(G, w) { var nv = B.nearVec(G.db, w), me = nv[G.secret], k = 0; for (var j = 0; j < G.db.N; j++) if (j !== w && nv[j] > me) k++; return k; }
+function resolve(G, e, ans, now, by, note) {
   G.pending = G.pending.filter(function (x) { return x !== e; });
   e.ans = ans; e.by = by;
   var rec = null;
+  if (e.parsed.t === 'guess' && (ans === 'py' || ans === 'pn' || ans === 'sp')) { if (e.parsed.w < 0) e.parsed = { t: 'fact', text: K.normL(e.text) }; }   // 名前でも「もっと具体的に」なら 上位のなかま → 正解ではない
+  var ans0 = ans;
+  var nearG = e.parsed.t === 'guess' && e.parsed.w >= 0 && (ans === 'py' || ans === 'pn' || ans === 'sp');   // 名前の質問に「近い」「部分的に…」→ はずれ、でも近い
+  if (nearG) ans = 'n';
   if (e.parsed.t === 'attr') { rec = { p: e.p, a: e.parsed.a, neg: e.parsed.neg, ans: ans === 'correct' ? 'y' : ans }; if (e.parsed.also && e.parsed.also.length) rec.also = e.parsed.also; }
-  else if (e.parsed.t === 'fact' && ans !== 'correct') rec = { p: e.p, f: e.parsed.text, ans: ans };
-  else if (e.parsed.t === 'guess' && e.parsed.w >= 0) rec = { p: e.p, w: e.parsed.w, ans: ans === 'correct' ? 'correct' : 'n' };
+  else if ((e.parsed.t === 'fact' || e.parsed.t === 'cmp' || e.parsed.t === 'kindof') && ans !== 'correct') rec = { p: e.p, f: e.parsed.text || e.text, pq: e.parsed, ans: ans };
+  else if (e.parsed.t === 'guess' && e.parsed.w >= 0) rec = { p: e.p, w: e.parsed.w, ans: ans === 'correct' ? 'correct' : nearG || (note && /(近い|ちかい|おしい|惜しい)/.test(note)) ? 'near' : 'n' };
   else if (e.parsed.t === 'guess' && ans === 'correct') rec = { p: e.p, w: G.secret, ans: 'correct' };
   e.rec = rec; G.qa.push(e);
   var m = G.master, mline = null;
-  if (isNpc(G, m)) mline = ans === 'correct' ? line(G, m, 'correct') : ans === 'y' ? line(G, m, 'yes') : ans === 'n' ? line(G, m, 'no') : ((e.parsed.t === 'none' || e.parsed.t === 'fact') && G.rng() < 0.6 ? line(G, m, 'unclear') : line(G, m, 'dunno'));
-  push(G, { t: 'a', qid: e.qid, p: e.p, ans: ans, say: mline, auto: by === 'timeout' ? 1 : 0 });
+  if (isNpc(G, m)) mline = ans0 === 'pn' && nearG ? line(G, m, 'pn') : ans === 'correct' ? line(G, m, 'correct') : ans === 'y' ? line(G, m, 'yes') : ans === 'n' ? line(G, m, 'no') : ans === 'py' ? line(G, m, 'py') : ans === 'pn' ? line(G, m, 'pn') : ans === 'sp' ? line(G, m, 'sp') : ((e.parsed.t === 'none' || e.parsed.t === 'fact') && G.rng() < 0.6 ? line(G, m, 'unclear') : line(G, m, 'dunno'));
+  push(G, { t: 'a', qid: e.qid, p: e.p, ans: ans0 === 'correct' ? ans : ans0, say: mline || (note ? String(note).slice(0, 40) : null), auto: by === 'timeout' ? 1 : 0 });
+  var pt0 = B.probs(G.pub).pt;
   if (rec && ans !== 'correct') B.apply(G.pub, rec);
+  // おだいばんが 答えといっしょに書いた ひとこと（「オンラインゲームは近い」）は 強い手がかり：そのことばに関係あるお題を 押し上げる
+  if (note && ans !== 'correct') hintKeys(G, note);
+  if (note && ans !== 'correct') { var nt = K.normL(note).replace(/^(はい|いいえ|ちがう|違う|わからない|部分的に(そう|違う)?)/, ''); if (nt.length >= 2) { e.note = note; var nr = { p: -1, f: nt, pq: { t: 'fact', text: nt }, ans: 'y' }; B.apply(G.pub, nr); B.apply(G.pub, nr); } }
+  // NPCおだいばんの ひとこと：みんなの推理（公開情報だけ）が ぐっと しぼれた質問に「いい質問」
+  if (rec && ans !== 'correct' && isNpc(G, m) && B.probs(G.pub).pt - pt0 > 0.18 && G.rng() < 0.55) say(G, m, line(G, m, 'mnice'), 'react', rr(G, G.T.react), now);
   if (ans === 'correct') { found(G, e, now); return; }
   // NPCが いい質問に ひとこと
   if (rec && rec.a != null && G.rng() < 0.12) { var cs = []; G.players.forEach(function (pl, i) { if (pl.kind === 'npc' && i !== e.p && i !== m) cs.push(i); }); if (cs.length) { var i2 = pick(G, cs); say(G, i2, line(G, i2, 'nice'), 'react', rr(G, G.T.react), now); } }
@@ -162,7 +180,11 @@ function npcAsk(G, i, now) {
   else c = B.chooseCommon(G.pub, Pc, { frac: frac, r: r });
   var text;
   if (c.w != null) { if (G.pub.dead[c.w] && c.w !== G.secret) return; text = line(G, i, 'guess', { w: G.db.words[c.w].w, p: pct(c.p || 0.5) }); L.ask(G, i, { w: c.w }, now, { text: text }); }
-  else { var q = K.phrase(c.a, r); text = ch ? ch.ask(q) : q; L.ask(G, i, { a: c.a }, now, { text: text }); }
+  else {
+    var used = G._said || (G._said = {}), last = G.qa.length ? G.qa[G.qa.length - 1] : null;
+    var q = K.phrase(c.a, r, used, last && G.qa.length && now - (last.at || 0) < 20000 * G.T.k ? last.ans : null);
+    text = ch ? ch.ask(q) : q; L.ask(G, i, { a: c.a }, now, { text: text });
+  }
 }
 
 // ---------- 話し合い ----------
@@ -477,6 +499,7 @@ L.view = function (G, p, now) {
 };
 // おだいばん（人間）向け：知識ベースでの答えの目安（ボタンの横に小さく出す。まちがっていたら無視してOK）
 function hintFor(G, e) {
+  if (e.parsed.t === 'cmp' || e.parsed.t === 'kindof') { return { ans: K.answerParsed(G.db, e.parsed, G.secret), attr: e.parsed.t === 'cmp' ? '大きさくらべ（「' + G.db.words[e.parsed.w].w + '」と）' : '「' + G.db.words[e.parsed.w].w + '」のなかま', neg: false }; }
   if (e.parsed.t === 'fact') { var fh = K.factHits(G.db, G.secret, e.parsed.text); var a0 = K.answerParsed(G.db, e.parsed, G.secret); return { ans: a0, attr: fh.length ? '「' + fh.map(function (h) { return h.s; }).join('・') + '」は お題に関係あり' : 'ずかんに のっていないことば', neg: false }; }
   if (e.parsed.t !== 'attr') return null; var a = K.answerParsed(G.db, e.parsed, G.secret); return { ans: a, attr: K.ATTRS[e.parsed.a].q, neg: !!e.parsed.neg }; }
 if (typeof module !== 'undefined' && module.exports) module.exports = L; else root.SKL = L;

@@ -36,7 +36,7 @@ test('お題の名前・別名は「それは○○？」で答えとして読�
 // ---------- 自由入力の読み取り ----------
 function parseAcc(T) {
   let ok = 0; const bad = [];
-  T.forEach(([q, exp, neg]) => { const p = K.parse(DB, q); let got; if (p.t === 'attr') got = K.ATTRS[p.a].id + (p.neg ? '!' : ''); else if (p.t === 'guess') got = 'guess:' + (p.w >= 0 ? DB.words[p.w].w : '?'); else if (p.t === 'fact' && p.a == null) got = 'guess:?'; else got = 'none';
+  T.forEach(([q, exp, neg]) => { const p = K.parse(DB, q); let got; if (p.t === 'attr') got = K.ATTRS[p.a].id + (p.neg ? '!' : ''); else if (p.t === 'guess') got = 'guess:' + (p.w >= 0 ? DB.words[p.w].w : '?'); else if (p.t === 'fact' && p.a == null) got = 'guess:?'; else if (p.t === 'cmp') got = 's' + Math.min(3, DB.words[p.w].size) + (p.big ? '' : '!'); else got = 'none';   // 「車より大きい？」は お題ずかんの語との大きさくらべ
     const want = exp.startsWith('guess') || exp === 'none' ? exp : exp + (neg ? '!' : ''); if (got === want) ok++; else bad.push(q + '→' + got); });
   return { acc: ok / T.length, n: T.length, bad };
 }

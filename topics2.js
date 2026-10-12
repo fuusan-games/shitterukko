@@ -15,7 +15,7 @@ items: `
 きゅうきゅうしゃ/救急車 3 e white sound city work hospital
 パトカー 3 e white black sound city kids work
 ヘリコプター 3 n fly sky sound -wheels
-ロケット 4 n fly sky white fire -wheels sound tall ?long
+ロケット 4 n fly sky white fire -wheels sound tall ?long science
 バイク/オートバイ 2 n sound city
 トラック 3 n city sound work contain ?long
 ショベルカー 3 h yellow sound work root
@@ -28,6 +28,7 @@ items: `
 `};
 T.home = { name: '家のもの', kind: 'obj', base: 'home ?wood ?metal -move -liv -edible',
 items: `
+すなどけい/砂時計 1 h glass square? hand home -elec number? -move time
 ベッド 3 e soft night sleep
 いす/椅子/イス 2 e school legs
 つくえ/机 2 e wood school square legs
@@ -36,7 +37,7 @@ items: `
 まくら/枕 2 n soft white night cloth sleep head
 ふとん/布団 3 n soft japan night cloth sleep ?winter ?hot
 カーテン 3 h cloth
-とけい/時計 2 e round school number
+とけい/時計 2 e round school number time
 かがみ/鏡 2 n glass bath
 はぶらし/歯ブラシ 1 e bath tool long mouth clean hand ?night
 タオル 2 e cloth soft bath clean square
@@ -45,7 +46,7 @@ items: `
 かぎ/鍵/カギ 1 n metal tool
 ゴミばこ/ゴミ箱 2 h square school contain clean ?kitchen ?round
 ほうき/箒 2 h long tool wood school clean hand ?fly
-カレンダー 2 h paper square number read
+カレンダー 2 h paper square number read time
 ふうりん/風鈴 1 h sound summer japan glass
 こたつ 2 n elec hot winter japan square sleep?
 うちわ 2 n summer japan paper tool hand round
@@ -56,22 +57,22 @@ items: `
 `};
 T.elec = { name: '電気のもの', kind: 'obj', base: 'home elec tool store -liv -edible -wood',
 items: `
-テレビ 2 e square black light sound
+テレビ 2 e square black light sound screen ?online
 れいぞうこ/冷蔵庫 3 e cold kitchen square white contain
 せんたくき/洗濯機 2 e white water square heavy bath sound clean contain ?wear
 そうじき/掃除機 2 n sound long clean
 でんしレンジ/電子レンジ/レンジ 2 n kitchen hot square contain
-スマホ/スマートフォン/携帯電話/けいたい 1 e square light sound black kids number hand money ?play ?glass
-パソコン/コンピューター 2 n square black number ?net ?play
+スマホ/スマートフォン/携帯電話/けいたい 1 e square light sound black kids number hand money ?play ?glass screen online
+パソコン/コンピューター 2 n square black number ?net ?play screen online
 ドライヤー 2 n hot sound bath hair hand
-でんきゅう/電球 1 h light glass round
-カメラ 1 n black hand
-ゲームき/ゲーム機 1 e play kids light sound hand
+でんきゅう/電球 1 h light glass round ?science
+カメラ 1 n black hand ?screen
+ゲームき/ゲーム機 1 e play kids light sound hand screen online
 すいはんき/炊飯器 2 h kitchen hot white rice contain
 エアコン/クーラー 2 n cold hot white -carry summer winter
 せんぷうき/扇風機 2 e summer sound
 リモコン 1 n black long number hand square
-ロボット 2 n move metal kids sound
+ロボット 2 n move metal kids sound ?online
 ヘッドホン/イヤホン 1 h sound music wear black head
 かいちゅうでんとう/懐中電灯 1 h light night long hand
 `};
@@ -107,7 +108,7 @@ items: `
 ホッチキス/ステープラー 1 h metal hand ?paper
 セロハンテープ/セロテープ 1 h cut round
 きょうかしょ/教科書 2 n paper write square read
-ちきゅうぎ/地球儀 2 h round blue
+ちきゅうぎ/地球儀 2 h round blue ?science
 えのぐ/絵の具 1 h kids
 ふで/筆 1 h long write japan wood hand hair
 はんこ/印鑑 1 h red japan hand round
@@ -130,7 +131,7 @@ items: `
 ズボン/パンツ 2 n long feet
 スカート 2 n cute ?feet ?long
 コート 2 n winter hot ?cold ?outside ?long
-うでどけい/腕時計 1 n metal round -cloth number hand
+うでどけい/腕時計 1 n metal round -cloth number hand time
 ゆびわ/指輪 1 h metal round -cloth hand money? ?light
 ながぐつ/長靴 2 h water -cloth feet ?long ?farm
 マスク 1 n white head mouth hospital ?paper
