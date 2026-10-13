@@ -2,7 +2,7 @@
 // usage: node tools/liveverify.js <url>   (PW_CORE=…/playwright-core)
 'use strict';
 const { chromium } = require(process.env.PW_CORE || '/tmp/pwc/node_modules/playwright-core');
-const URL0 = (process.argv[2] || 'https://ryowatanabe1161-svg.github.io/shitterukko/');
+const URL0 = (process.argv[2] || 'https://fuusan-games.github.io/shitterukko/');
 const QS = process.argv.slice(3).length ? process.argv.slice(3) : ['ボールつかいますか？', 'ドッチボール？'];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 (async () => {
